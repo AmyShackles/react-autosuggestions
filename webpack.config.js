@@ -21,4 +21,7 @@ module.exports = {
     library: "react-autosuggestions",
     libraryTarget: "umd",
   },
+  externals: {
+    react: "react",
+  },
 };
