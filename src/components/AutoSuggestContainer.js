@@ -59,7 +59,6 @@ export const AutoSuggestContainer = ({
     setSearchText(event.target.innerText);
   };
   const doKeyPress = (event) => {
-    console.log(suggestionRef);
     let highlighted =
       suggestionRef.current &&
       [...suggestionRef.current.children].find((node) =>
