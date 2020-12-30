@@ -119,7 +119,7 @@ export const AutoSuggestContainer = ({
       prev && inputRef.current.setAttribute("aria-activedescendant", prev.id);
       highlighted = false;
     } else {
-      current = suggestionRef.current.lastChild;
+      current = suggestionRef.current && suggestionRef.current.lastChild;
       current.classList.add("highlighted");
       current.setAttribute("aria-selected", true);
       inputRef.current.setAttribute("aria-activedescendant", current.id);
@@ -141,7 +141,7 @@ export const AutoSuggestContainer = ({
       next && inputRef.current.setAttribute("aria-activedescendant", next.id);
       highlighted = false;
     } else {
-      current = suggestionRef.current.firstChild;
+      current = suggestionRef.current && suggestionRef.current.firstChild;
       current.classList.add("highlighted");
       current.setAttribute("aria-selected", true);
       inputRef.current.setAttribute("aria-activedescendant", current.id);
