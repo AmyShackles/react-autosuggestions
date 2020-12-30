@@ -1,0 +1,4 @@
+li:hover, li.highlighted {
+    background: #110D3B;
+    color: #FFF
+  }

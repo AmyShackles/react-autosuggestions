@@ -12,7 +12,6 @@ export const AutoSuggestOptions = React.forwardRef(
     },
     ref
   ) => {
-    let innerRef = React.useRef(ref);
     return (
       <ul
         id={id}
