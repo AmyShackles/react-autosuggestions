@@ -17,7 +17,7 @@ export const AutoSuggestOptions = React.forwardRef(
         id={id}
         role="listbox"
         onClick={onClick}
-        ref={innerRef}
+        ref={ref}
         style={styles.suggestionOptions && styles.suggestionOptions}
       >
         {options &&
