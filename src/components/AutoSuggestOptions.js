@@ -12,12 +12,13 @@ export const AutoSuggestOptions = React.forwardRef(
     },
     ref
   ) => {
+    let innerRef = React.useRef(ref);
     return (
       <ul
         id={id}
         role="listbox"
         onClick={onClick}
-        ref={ref}
+        ref={innerRef}
         style={styles.suggestionOptions && styles.suggestionOptions}
       >
         {options &&
