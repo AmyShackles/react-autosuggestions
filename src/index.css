@@ -2,3 +2,14 @@ li:hover, li.highlighted {
     background: #110D3B;
     color: #FFF
   }
+  input.loading {
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif);
+    background-position: right center;
+    background-repeat: no-repeat;
+  }
+  input.loading {
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif);
+    background-position: right center;
+    background-repeat: no-repeat;
+  }
+  

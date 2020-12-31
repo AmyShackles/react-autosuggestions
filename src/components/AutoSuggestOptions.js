@@ -9,6 +9,7 @@ export const AutoSuggestOptions = React.forwardRef(
       options = [],
       styles = {},
       name = "search",
+      selected = "",
     },
     ref
   ) => {
@@ -24,11 +25,10 @@ export const AutoSuggestOptions = React.forwardRef(
           options.map((opt, index) => (
             <AutoSuggestOption
               key={index}
-              role="option"
               id={`${name}-suggestion${index}`}
+              selected={selected}
               value={opt}
               styles={styles}
-              value={opt}
             />
           ))}
       </ul>
