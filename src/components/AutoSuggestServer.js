@@ -4,7 +4,7 @@ import { AutoSuggestContainer } from "../components/AutoSuggestContainer.js";
 import "../index.css";
 
 export const AutoSuggestServer = React.forwardRef(
-  ({ url = "", name, debounceTime = 200, styles }, ref) => {
+  ({ url = "", name, debounceTime = 200, styles, type = "Server" }, ref) => {
     const [options, setOptions] = React.useState([]);
     const [searchText, setSearchText] = React.useState("");
     const [searching, setSearching] = React.useState(false);
@@ -60,6 +60,7 @@ export const AutoSuggestServer = React.forwardRef(
     } else {
       return (
         <AutoSuggestContainer
+            dataType="Server"
           ref={ref}
           name={name}
           options={options}

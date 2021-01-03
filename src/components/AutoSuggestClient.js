@@ -1,8 +1,9 @@
 import React from "react";
 import { AutoSuggestContainer } from "./AutoSuggestContainer.js";
-
+import { alphanumericSort } from "../utils/alphanumericSort.js";
 export const AutoSuggestClient = React.forwardRef(
-  ({ name = "", options = [], styles = {} }, ref) => {
+  ({ name = "", options = [], styles = {}, type = "Client" }, ref) => {
+    options = alphanumericSort(options);
     const [searching, setSearching] = React.useState(false);
     const [searchText, setSearchText] = React.useState("");
     const [results, setResults] = React.useState(options);
@@ -42,7 +43,7 @@ export const AutoSuggestClient = React.forwardRef(
         setSearching={setSearching}
         setSearchText={handleInputChange}
         styles={styles}
-        type="client"
+        dataType="Client"
         noResult={noResult}
       />
     );

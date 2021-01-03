@@ -81,6 +81,7 @@ export const AutoSuggest = React.forwardRef(
           ref={ref}
           name={name}
           url={url}
+          type="Server"
           debounceTime={debounceTime}
           styles={styles}
         />
@@ -90,6 +91,7 @@ export const AutoSuggest = React.forwardRef(
       <AutoSuggestClient
         ref={ref}
         name={name}
+        type="Client"
         options={options}
         styles={styles}
       />
