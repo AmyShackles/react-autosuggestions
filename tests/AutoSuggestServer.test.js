@@ -62,6 +62,39 @@ describe("AutoSuggest Server variant", () => {
                 expect(option.getAttribute("textvalue")).toBe(fakeModels[index]);
             });
         });
+        test("It should handle clearing the search field", async () => {
+            await act(async () => {
+                render(
+                    <ServerWrapper
+                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                        name="Model"
+                        type="Server"
+                    />
+                );
+            });
+            const input = screen.getByRole("textbox", { name: "Model" });
+
+            await act(async () => {
+                fireEvent.change(input, { target: { value: "double" } });
+                await waitFor(() => expect(screen.queryByText(/Loading/)).toBeInTheDocument());
+            });
+            await act(async () => {
+                await waitFor(() => {
+                    expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+                });
+            });
+            const options = screen.getAllByRole("option");
+            options.forEach((option, index) => {
+                expect(option.getAttribute("textvalue")).toBe(fakeModels[index]);
+            });
+            await act(async () => {
+                userEvent.clear(input);
+                await waitFor(() => {
+                    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+                });
+            });
+            expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+        });
         test("It handles hitting the tab key", async () => {
             await act(async () => {
                 render(
