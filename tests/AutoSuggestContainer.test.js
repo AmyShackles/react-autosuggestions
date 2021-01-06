@@ -8,18 +8,23 @@ const AutoSuggest = ({name = "search", styles = {}, options=[], searchText, sear
   const [activeDescendant, setActiveDescendant] = React.useState();
 
   return (
-    <AutoSuggestContainer 
-      ref={ref}
-      name={name}
-      styles={styles}
-      options={options}
-      searchText={searchText}
-      searching={searching}
-      url={url}
-      activeDescendant={activeDescendant}
-      setActiveDescendant={setActiveDescendant}
-      loading={loading}/>
-  )
+      <AutoSuggestContainer
+          ref={ref}
+          name={name}
+          styles={styles}
+          options={options}
+          searchText={searchText}
+          setSearchText={() => {}}
+          clearText={() => {}}
+          setSearching={() => {}}
+          searching={searching}
+          dataType="Client"
+          url={url}
+          activeDescendant={activeDescendant}
+          setActiveDescendant={setActiveDescendant}
+          loading={loading}
+      />
+  );
 }
 
 test("AutoSuggestContainer should have a combobox role", () => {

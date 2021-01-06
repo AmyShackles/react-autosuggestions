@@ -505,57 +505,61 @@ describe("Tab key", () => {
       expect(input).toHaveFocus();
       userEvent.tab();
       expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("B");
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
   });
 });
 describe("Mouse selection", () => {
-  test("It should update the input field to the selected option", () => {
-    render(
-      <Form
-        name="Make"
-        options={[
-          "Acura",
-          "BMW",
-          "Audi",
-          "Bentley",
-          "Buick",
-          "Cadillac",
-          "Chevrolet",
-        ]}
-        styles={{ searchField: { focus: { color: "#f29" } } }}
-      />
-    );
-    const input = screen.getByRole("textbox", { name: "Make" });
-    fireEvent.change(input, { target: { value: "B" } }); 
-    expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("B")
-    const option = screen.getByRole("option", { name: "Bentley"});
-    userEvent.click(option);
-    expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("Bentley")
-  });
-  test("It should remove any aria-activedescendant previously set", () => {
-    render(
-      <Form
-        name="Make"
-        options={[
-          "Acura",
-          "BMW",
-          "Audi",
-          "Bentley",
-          "Buick",
-          "Cadillac",
-          "Chevrolet",
-        ]}
-        styles={{ searchField: { focus: { color: "#f29" } } }}
-      />
-    );
-    const input = screen.getByRole("textbox", { name: "Make" });
-    fireEvent.change(input, { target: { value: "B" } }); 
-    expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("B")
-    userEvent.type(input, "{arrowdown}");
-    const option = screen.getByRole("option", { name: "Bentley"})
-    expect(input).toHaveAttribute("aria-activedescendant", option.id);
-    const newOption = screen.getByRole("option", { name: "BMW"});
-    userEvent.click(newOption);
-    expect(input).not.toHaveAttribute("aria-activedescendant");
-  })
-})
+    test("It should update the input field to the selected option", () => {
+        render(
+            <Form
+                name="Make"
+                options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
+                styles={{ searchField: { focus: { color: "#f29" } } }}
+            />
+        );
+        const input = screen.getByRole("textbox", { name: "Make" });
+        fireEvent.change(input, { target: { value: "B" } });
+        expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("B");
+        const option = screen.getByRole("option", { name: "Bentley" });
+        userEvent.click(option);
+        expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("Bentley");
+    });
+    test("It should remove any aria-activedescendant previously set", () => {
+        render(
+            <Form
+                name="Make"
+                options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
+                styles={{ searchField: { focus: { color: "#f29" } } }}
+            />
+        );
+        const input = screen.getByRole("textbox", { name: "Make" });
+        fireEvent.change(input, { target: { value: "B" } });
+        expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("B");
+        userEvent.type(input, "{arrowdown}");
+        const option = screen.getByRole("option", { name: "Bentley" });
+        expect(input).toHaveAttribute("aria-activedescendant", option.id);
+        const newOption = screen.getByRole("option", { name: "BMW" });
+        userEvent.click(newOption);
+        expect(input).not.toHaveAttribute("aria-activedescendant");
+        expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    });
+});
+describe("Defaults", () => {
+    test("It should default the name of the input to be 'Search'", () => {
+        const ref = React.createRef();
+        render(<AutoSuggest ref={ref} />);
+        expect(screen.getByLabelText(/Search/)).toBeInTheDocument();
+        expect(screen.getByText(/No results found/)).toBeInTheDocument();
+    });
+    test("It should provide a message that there are no results", () => {
+        const ref = React.createRef();
+        render(<AutoSuggest ref={ref} />);
+        expect(screen.getByText(/No results found/)).toBeInTheDocument();
+    });
+    test("It should render AutoSuggestClient if no url or type is provided", () => {
+        const ref = React.createRef();
+        const { getByDataType } = render(<AutoSuggest ref={ref} />);
+        expect(getByDataType("Client")).toBeInTheDocument();
+    });
+});
