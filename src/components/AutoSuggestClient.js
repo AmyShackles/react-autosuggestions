@@ -19,6 +19,12 @@ export const AutoSuggestClient = React.forwardRef(({ name, options, styles, type
     }, [searchText, isOpen, options]);
 
     React.useEffect(() => {
+        if (!searchText) {
+            setIsOpen(false);
+        }
+    }, [searchText]);
+
+    React.useEffect(() => {
         if (isOpen === false) {
             setResults([]);
             setNoResult(false);

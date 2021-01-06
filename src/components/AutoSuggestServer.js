@@ -16,8 +16,8 @@ export const AutoSuggestServer = React.forwardRef(
         const [activeDescendant, setActiveDescendant] = React.useState();
 
         React.useEffect(() => {
+            if (isOpen && searchText) setLoading(true);
             if (isOpen && searchText && debouncedSearchText) {
-                setLoading(true);
                 fetch(`${url}/${encodeURIComponent(debouncedSearchText)}`)
                     .then((res) => res.json())
                     .then((data) => {
@@ -40,6 +40,12 @@ export const AutoSuggestServer = React.forwardRef(
             }
         }, [isOpen, searchText, debouncedSearchText, url]);
 
+        React.useEffect(() => {
+            if (!searchText) {
+                setLoading(false);
+                setIsOpen(false);
+            }
+        });
         const handleInputChange = (value) => {
             setSearchText(value);
         };
