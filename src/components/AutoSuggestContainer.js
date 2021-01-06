@@ -31,9 +31,6 @@ export const AutoSuggestContainer = React.forwardRef(
         };
         const focusStyles = styles.searchField && styles.searchField.focus ? styles.searchField.focus : false;
         const suggestionRef = React.createRef();
-        if (loading === false && searching === false && !searchText && error === false && options.length === 0) {
-            noResult = true;
-        }
 
         let label = `${name[0].toUpperCase()}${name.slice(1)}`;
         if (inputRef.current && focusStyles) {

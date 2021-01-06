@@ -550,13 +550,8 @@ describe("Defaults", () => {
         const ref = React.createRef();
         render(<AutoSuggest ref={ref} />);
         expect(screen.getByLabelText(/Search/)).toBeInTheDocument();
-        expect(screen.getByText(/No results found/)).toBeInTheDocument();
     });
-    test("It should provide a message that there are no results", () => {
-        const ref = React.createRef();
-        render(<AutoSuggest ref={ref} />);
-        expect(screen.getByText(/No results found/)).toBeInTheDocument();
-    });
+
     test("It should render AutoSuggestClient if no url or type is provided", () => {
         const ref = React.createRef();
         const { getByDataType } = render(<AutoSuggest ref={ref} />);
