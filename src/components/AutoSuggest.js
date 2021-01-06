@@ -28,6 +28,24 @@ export const AutoSuggest = React.forwardRef(
         },
       },
     };
+    const [isOpen, setIsOpen] = React.useState(false);
+
+    const clickListener = React.useCallback(
+        (e) => {
+            if (!ref.current.contains(e.target)) {
+                setIsOpen(false);
+            }
+        },
+        [ref.current]
+    );
+
+    React.useEffect(() => {
+        document.addEventListener("click", clickListener);
+        return () => {
+            document.removeEventListener("click", clickListener);
+        };
+    }, []);
+    
     if (!type) {
       if (url) {
         type = "server";
@@ -38,24 +56,28 @@ export const AutoSuggest = React.forwardRef(
 
     if (type === "server") {
       return (
-        <AutoSuggestServer
-          ref={ref}
-          name={name}
-          url={url}
-          type="Server"
-          debounceTime={debounceTime}
-          styles={styles}
-        />
+          <AutoSuggestServer
+              ref={ref}
+              name={name}
+              url={url}
+              type="Server"
+              debounceTime={debounceTime}
+              styles={styles}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+          />
       );
     }
     return (
-      <AutoSuggestClient
-        ref={ref}
-        name={name}
-        type="Client"
-        options={options}
-        styles={styles}
-      />
+        <AutoSuggestClient
+            ref={ref}
+            name={name}
+            type="Client"
+            options={options}
+            styles={styles}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+        />
     );
   }
 );

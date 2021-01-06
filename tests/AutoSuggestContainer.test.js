@@ -8,13 +8,13 @@ const AutoSuggest = ({
     styles = {},
     options = [],
     searchText,
-    openListbox = false,
+    isOpen = false,
+    setIsOpen = () => {},
     url = undefined,
     loading = false
 }) => {
     const ref = React.createRef();
     const [activeDescendant, setActiveDescendant] = React.useState();
-
     return (
         <AutoSuggestContainer
             ref={ref}
@@ -24,8 +24,8 @@ const AutoSuggest = ({
             searchText={searchText}
             setSearchText={() => {}}
             clearText={() => {}}
-            setOpenListbox={() => {}}
-            openListbox={openListbox}
+            setOpenListbox={setIsOpen}
+            openListbox={isOpen}
             dataType="Client"
             url={url}
             activeDescendant={activeDescendant}
@@ -51,12 +51,12 @@ describe("Listbox", () => {
 });
 test("AutoSuggestContainer should have a listbox if searchtext is provided and openListbox is true", () => {
     render(
-          <AutoSuggest
-                name="Make"
-                options={["Bentley", "Hyundai", "Honda", "Ford", "Toyota"]}
-                searchText="H"
-                openListbox={true}
-          />
+        <AutoSuggest
+            name="Make"
+            options={["Bentley", "Hyundai", "Honda", "Ford", "Toyota"]}
+            searchText="H"
+            isOpen={true}
+        />
     );
     expect(screen.queryByRole("listbox")).toBeInTheDocument();
 });

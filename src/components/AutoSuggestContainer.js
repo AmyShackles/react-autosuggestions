@@ -11,7 +11,7 @@ export const AutoSuggestContainer = React.forwardRef(
             setSearchText,
             searchText = "",
             openListbox,
-            setOpenListbox,
+            setOpenListbox = () => {},
             clearText,
             noResult = false,
             styles = {},

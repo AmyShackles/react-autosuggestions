@@ -554,3 +554,27 @@ describe("Mouse selection", () => {
         expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
 });
+describe("Clicking outside of the AutoSuggest component", () => {
+    test("It should close the options menu", () => {
+        render(
+            <>
+                <Form
+                    name="Make"
+                    options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
+                    styles={{ searchField: { focus: { color: "#f29" } } }}
+                />
+                <p>Different input"</p>
+            </>
+        );
+        const input = screen.getByRole("textbox", { name: "Make" });
+        fireEvent.change(input, { target: { value: "B" } });
+        expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("B");
+        userEvent.type(input, "{arrowdown}");
+        const option = screen.getByRole("option", { name: "Bentley" });
+        expect(input).toHaveAttribute("aria-activedescendant", option.id);
+        expect(screen.getByRole("listbox")).toBeInTheDocument();
+        const outsideInputField = screen.getByText(/Different input/);
+        fireEvent.click(outsideInputField);
+        expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    });
+});
