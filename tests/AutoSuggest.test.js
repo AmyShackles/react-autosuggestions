@@ -18,25 +18,32 @@ const Form = ({ name = "", url = "", options = [], type = "", styles }) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-            <AutoSuggest
-              name={name}
-              type={type}
-              url={url}
-              options={options}
-              ref={make}
-              styles={styles}
-            />
-          </form>
-          <p>{formData && formData}</p>
-        </>
-    );  
-  };  
-    describe("AutoSuggest rendering", () => {
-      test("AutoSuggest should render AutoSuggestServer if a url is provided", () => {
-        const { getByDataType } = render(
-          <Form
-            name="Make"
-            url="https://ntsb-server.herokuapp.com/api/accidents/makeList"
+          <AutoSuggest
+            name={name}
+            type={type}
+            url={url}
+            options={options}
+            ref={make}
+            styles={styles}
+          />
+        </form>
+        <p>{formData && formData}</p>
+      </>
+  );  
+};
+describe("AutoSuggest rendering", () => {
+  describe("Defaults", () => {
+      test("It should default the name of the input to be 'Search'", () => {
+          const ref = React.createRef();
+          render(<AutoSuggest ref={ref} />);
+          expect(screen.getByLabelText(/Search/)).toBeInTheDocument();
+      });
+  });
+  test("AutoSuggest should render AutoSuggestServer if a url is provided", () => {
+    const { getByDataType } = render(
+      <Form
+        name="Make"
+        url="https://ntsb-server.herokuapp.com/api/accidents/makeList"
       />
     );
     expect(getByDataType("Server")).toBeInTheDocument();
@@ -469,11 +476,11 @@ describe("Tab key", () => {
       userEvent.type(input, "{arrowup}");
       userEvent.type(input, "{arrowup}");
       expect(input).toHaveFocus();
-
       const option = screen.getByRole("option", { name: "Bentley"});
       expect(option).toHaveAttribute('aria-selected', "true");
       userEvent.tab();
       expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("Bentley");
+      expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
     });
   });
   describe("If an option has not been selected", () => {
@@ -506,6 +513,7 @@ describe("Tab key", () => {
       userEvent.tab();
       expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("B");
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+      expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
     });
   });
 });
@@ -524,6 +532,7 @@ describe("Mouse selection", () => {
         const option = screen.getByRole("option", { name: "Bentley" });
         userEvent.click(option);
         expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("Bentley");
+        expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
     });
     test("It should remove any aria-activedescendant previously set", () => {
         render(
@@ -543,18 +552,5 @@ describe("Mouse selection", () => {
         userEvent.click(newOption);
         expect(input).not.toHaveAttribute("aria-activedescendant");
         expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
-    });
-});
-describe("Defaults", () => {
-    test("It should default the name of the input to be 'Search'", () => {
-        const ref = React.createRef();
-        render(<AutoSuggest ref={ref} />);
-        expect(screen.getByLabelText(/Search/)).toBeInTheDocument();
-    });
-
-    test("It should render AutoSuggestClient if no url or type is provided", () => {
-        const ref = React.createRef();
-        const { getByDataType } = render(<AutoSuggest ref={ref} />);
-        expect(getByDataType("Client")).toBeInTheDocument();
     });
 });

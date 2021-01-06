@@ -9,7 +9,7 @@ export const AutoSuggestServer = React.forwardRef(
   ({ url="", name, debounceTime = 200, styles, type }, ref) => {
       const [options, setOptions] = React.useState([]);
       const [searchText, setSearchText] = React.useState();
-      const [searching, setSearching] = React.useState(false);
+      const [openListbox, setOpenListbox] = React.useState(false);
       const [errored, setErrored] = React.useState(false);
       const [noResult, setNoResult] = React.useState(false);
       const debouncedSearchText = useDebounce(searchText, debounceTime);
@@ -17,16 +17,17 @@ export const AutoSuggestServer = React.forwardRef(
       const [activeDescendant, setActiveDescendant] = React.useState();
 
       React.useEffect(() => {
-          if (searching && searchText && debouncedSearchText) {
+          if (openListbox && searchText && debouncedSearchText) {
+              setLoading(true);
               fetch(`${url}/${encodeURIComponent(debouncedSearchText)}`)
                   .then((res) => res.json())
                   .then((data) => {
                       if (data && data.length) {
-                          setSearching(true);
+                          setOpenListbox(true);
                           setOptions(data);
                           setNoResult(false);
                       } else {
-                          setSearching(false);
+                          setOpenListbox(false);
                           setOptions([]);
                           setNoResult(true);
                       }
@@ -38,10 +39,9 @@ export const AutoSuggestServer = React.forwardRef(
                       setLoading(false);
                   });
           }
-      }, [searching, searchText, debouncedSearchText, url]);
+      }, [openListbox, searchText, debouncedSearchText, url]);
 
       const handleInputChange = (value) => {
-          value && setLoading(true);
           setSearchText(value);
       };
 
@@ -57,8 +57,8 @@ export const AutoSuggestServer = React.forwardRef(
                   error={errored}
                   setSearchText={handleInputChange}
                   searchText={searchText}
-                  searching={searching}
-                  setSearching={setSearching}
+                  openListbox={openListbox}
+                  setOpenListbox={setOpenListbox}
                   noResult={noResult}
                   styles={styles}
                   loading={loading}
