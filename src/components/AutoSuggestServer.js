@@ -17,7 +17,7 @@ export const AutoSuggestServer = React.forwardRef(
 
         React.useEffect(() => {
             if (isOpen && searchText) setLoading(true);
-            if (isOpen && searchText && debouncedSearchText) {
+            if (isOpen && searchText && debouncedSearchText && searchText === debouncedSearchText) {
                 fetch(`${url}/${encodeURIComponent(debouncedSearchText)}`)
                     .then((res) => res.json())
                     .then((data) => {
