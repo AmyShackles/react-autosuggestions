@@ -1,6 +1,13 @@
 import React from "react";
 
-export const AutoSuggestOption = ({ id, styles, value, classNames, selected }) => {
+export const AutoSuggestOption = ({
+  id,
+  styles,
+  value,
+  classNames,
+  selected,
+  onClick,
+}) => {
   return (
     <li
       role="option"
@@ -8,6 +15,8 @@ export const AutoSuggestOption = ({ id, styles, value, classNames, selected }) =
       aria-selected={id === selected}
       className={`auto-suggestions${classNames ? ` ${classNames}` : ""}`}
       style={styles.suggestionOption && styles.suggestionOption}
+      textvalue={value}
+      onClick={onClick}
     >
       {value}
     </li>

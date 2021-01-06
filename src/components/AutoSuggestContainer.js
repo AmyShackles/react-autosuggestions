@@ -1,6 +1,7 @@
 import React from "react";
 import { AutoSuggestOptions } from "./AutoSuggestOptions.js";
 
+
 export const AutoSuggestContainer = React.forwardRef(
   (
     {
@@ -11,137 +12,72 @@ export const AutoSuggestContainer = React.forwardRef(
       searchText = "",
       searching = false,
       setSearching = () => {},
-      clearOptions = () => {},
+      clearText = () => {},
       noResult = false,
-      styles = {
-        announcement: {
-          position: "absolute",
-          clip: "rect(0 0 0 0)",
-          clipPath: "inset(50%)",
-          height: "1px",
-          width: "1px",
-          overflow: "hidden",
-        },
-        combobox: {
-          display: "inline-block",
-        },
-        searchField: {
-          padding: ".5rem",
-          border: "2px solid #c8c8c8",
-          backgroundColor: "#fff",
-          borderRadius: "6px",
-          color: "#000",
-          fontWeight: "normal",
-          fontSize: "1.35rem",
-          margin: "0 auto",
-          width: "19rem",
-          focus: {
-            color: "#000",
-            border: "2px solid #005499",
-            outline: "none",
-          },
-        },
-        searchLabel: {
-          display: "block",
-          fontSize: "1.35rem",
-        },
-        suggestionsContainer: {
-          display: "block",
-          position: "absolute",
-          border: "1px solid #999",
-          background: "#fff",
-          width: "20rem",
-        },
-        suggestionOptions: {
-          margin: "0",
-          padding: "0",
-          listStyle: "none",
-        },
-        suggestionOption: {
-          margin: "0",
-          padding: ".5rem",
-          fontSize: "1.35rem",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          cursor: "default",
-        },
-      },
+      styles = {},
       loading = false,
       dataType = "",
+      activeDescendant,
+      setActiveDescendant
     },
-    ref
+    inputRef
   ) => {
     const keys = {
       ESC: 27,
       TAB: 9,
       RETURN: 13,
-      LEFT: 37,
       UP: 38,
-      RIGHT: 39,
       DOWN: 40,
     };
-    const inputRef = ref;
+    const focusStyles = styles.searchField && styles.searchField.focus ? styles.searchField.focus : false;
     const suggestionRef = React.createRef();
-    const [selected, setSelected] = React.useState("");
 
-    if (inputRef.current && styles.searchField && styles.searchField.focus) {
+
+    let label = `${name[0].toUpperCase()}${name.slice(1)}`;
+    if (inputRef.current && focusStyles) {
       inputRef.current.addEventListener("focus", addInputFocusStyles);
       inputRef.current.addEventListener("blur", addInputBlurStyles);
     }
-    function addInputFocusStyles() {
-      if (styles.searchField.focus && inputRef.current) {
-        Object.entries(styles.searchField.focus).forEach(
+    function addInputFocusStyles(event) {
+      focusStyles && Object.entries(focusStyles).forEach(
           ([key, value], index) => {
-            inputRef.current.style[key] = value;
+            event.target.style[key] = value;
           }
         );
-      }
     }
-    function addInputBlurStyles() {
-      if (styles.searchField.focus && inputRef.current) {
-        Object.entries(styles.searchField.focus).forEach(([key, value]) => {
-          inputRef.current.style[key] = styles.searchField[key];
+    function addInputBlurStyles(event) {
+      focusStyles &&
+        Object.entries(focusStyles).forEach(([key, value]) => {
+          event.target.style[key] = styles.searchField[key];
         });
-      }
     }
 
     const doSearch = (event) => {
+      inputRef.current.focus();
       setSearchText(event.target.value);
-      event.target.removeAttribute("aria-activedescendant");
+      setActiveDescendant(undefined);
       setSearching(true);
     };
 
     const copyTextRemoveSuggestions = (event) => {
-      inputRef.current.value = event.target.innerText;
-      inputRef.current.removeAttribute("aria-activedescendant");
+      setSearchText(event.target.getAttribute("textvalue"))
+      setActiveDescendant(undefined);
       setSearching(false);
-      setSearchText(event.target.innerText);
     };
     const doKeyPress = (event) => {
       let highlighted =
         suggestionRef.current &&
         [...suggestionRef.current.children].find((node) =>
-          /highlighted/.test(node.className)
-        );
-      if (highlighted) setSelected(highlighted.id);
+          node.id === activeDescendant
+        );      
       switch (event.which) {
         case keys.ESC:
-          event.target.removeAttribute("aria-activedescendant");
           setSearching(false);
-          clearOptions();
-          break;
-        case keys.RIGHT:
-          if (highlighted) {
-            return selectOptions(highlighted);
-          }
+          setActiveDescendant(undefined);
+          clearText();
           break;
 
         case keys.TAB:
-          event.target.removeAttribute("aria-activedescendant");
-          setSearching(false);
-          clearOptions();
-          break;
-
         case keys.RETURN:
           if (highlighted) {
             event.preventDefault();
@@ -149,10 +85,12 @@ export const AutoSuggestContainer = React.forwardRef(
             return selectOptions(highlighted);
           }
           break;
+
         case keys.UP:
           event.preventDefault();
           event.stopPropagation();
           return moveUp(highlighted);
+          
         case keys.DOWN:
           event.preventDefault();
           event.stopPropagation();
@@ -166,7 +104,6 @@ export const AutoSuggestContainer = React.forwardRef(
     const moveUp = (highlighted) => {
       if (!searching) return;
       let current = {};
-      inputRef.current.removeAttribute("aria-activedescendant");
       if (highlighted) {
         current = highlighted;
         current.setAttribute("aria-selected", false);
@@ -174,20 +111,19 @@ export const AutoSuggestContainer = React.forwardRef(
         let prev = current.previousElementSibling;
         prev && prev.setAttribute("aria-selected", true);
         prev && prev.classList.add("highlighted");
-        prev && inputRef.current.setAttribute("aria-activedescendant", prev.id);
+        prev && setActiveDescendant(prev.id)
         highlighted = false;
       } else {
         current = suggestionRef.current.lastChild;
         current.classList.add("highlighted");
         current.setAttribute("aria-selected", true);
-        inputRef.current.setAttribute("aria-activedescendant", current.id);
+        setActiveDescendant(current.id);
       }
     };
 
     const moveDown = (highlighted) => {
       if (!searching) return;
       let current = {};
-      inputRef.current.removeAttribute("aria-activedescendant");
 
       if (highlighted) {
         current = highlighted;
@@ -196,27 +132,20 @@ export const AutoSuggestContainer = React.forwardRef(
         let next = current.nextElementSibling;
         next && next.classList.add("highlighted");
         next && next.setAttribute("aria-selected", true);
-        next && inputRef.current.setAttribute("aria-activedescendant", next.id);
+        next && setActiveDescendant(next.id);
         highlighted = false;
       } else {
         current = suggestionRef.current.firstChild;
         current.classList.add("highlighted");
         current.setAttribute("aria-selected", true);
-        inputRef.current.setAttribute("aria-activedescendant", current.id);
+        setActiveDescendant(current.id);
       }
     };
 
     const selectOptions = (highlighted) => {
-      if (highlighted) {
-        let search = inputRef.current;
-        search.removeAttribute("aria-activedescendant");
-        search.value = highlighted.innerText;
+        let text = highlighted.getAttribute('textvalue');
+        setSearchText(text);
         setSearching(false);
-        setSearchText(highlighted.innerText);
-        clearOptions();
-      } else {
-        return;
-      }
     };
     return (
       <>
@@ -242,10 +171,10 @@ export const AutoSuggestContainer = React.forwardRef(
             style={styles.combobox && styles.combobox}
           >
             <label
-              htmlFor={`${name}-input`}
+              id={`${name}-label`}
               style={styles.searchLabel && styles.searchLabel}
             >
-              {name[0].toUpperCase() + name.slice(1)}
+              {label}
             </label>
             <input
               id={`${name}-input`}
@@ -257,10 +186,12 @@ export const AutoSuggestContainer = React.forwardRef(
               onChange={doSearch}
               onKeyDown={doKeyPress}
               value={searchText}
+              aria-labelledby={`${name}-label`}
               style={styles.searchField && styles.searchField}
+              aria-activedescendant={activeDescendant}
             />
           </div>
-
+            {loading && <p style={styles.announcement && styles.announcement}>Loading {label} options</p>}
           <div
             className="autocompleteSuggestions"
             id={`${name}-autocomplete`}
@@ -278,10 +209,10 @@ export const AutoSuggestContainer = React.forwardRef(
                 ref={suggestionRef}
                 id={`${name}-autosuggest-options`}
                 options={options}
-                onClick={copyTextRemoveSuggestions}
+                onClick={(e) => copyTextRemoveSuggestions(e)}
                 styles={styles}
                 name={name}
-                selected={selected}
+                selected={activeDescendant}
               />
             )}
           </div>

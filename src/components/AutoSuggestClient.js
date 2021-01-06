@@ -8,6 +8,7 @@ export const AutoSuggestClient = React.forwardRef(
     const [searchText, setSearchText] = React.useState("");
     const [results, setResults] = React.useState(options);
     const [noResult, setNoResult] = React.useState(false);
+    const [activeDescendant, setActiveDescendant] = React.useState();
 
     React.useEffect(() => {
       if (searching && searchText) {
@@ -43,8 +44,11 @@ export const AutoSuggestClient = React.forwardRef(
         setSearching={setSearching}
         setSearchText={handleInputChange}
         styles={styles}
-        dataType="Client"
+        dataType={type}
         noResult={noResult}
+        activeDescendant={activeDescendant}
+        setActiveDescendant={setActiveDescendant}
+        clearText={() => setSearchText("")}
       />
     );
   }

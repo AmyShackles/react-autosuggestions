@@ -14,28 +14,45 @@
     "react-dom": "^17.0.1"
   },
   "scripts": {
-    "test": "jest tests",
+    "test": "jest tests --verbose",
+    "test:coverage": "jest tests --coverage",
     "test:watch": "npm run test --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",
+    "@testing-library/user-event": "^12.6.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.0.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.6.3",
+    "msw": "^0.25.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "webpack": "^5.11.1",
-    "webpack-cli": "^4.3.0"
+    "webpack": "^5.11.1"
   },
   "jest": {
     "moduleNameMapper": {
       "\\.css$": "identity-obj-proxy"
+    },
+    "collectCoverageFrom": [
+      "src/components/**/*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
     }
+  },
+  "dependencies": {
+    "cross-fetch": "^3.0.6"
   }
 }

@@ -17,8 +17,8 @@ export const AutoSuggestOptions = React.forwardRef(
       <ul
         id={id}
         role="listbox"
-        onClick={onClick}
         ref={ref}
+        aria-labelledby={`${name}-label`}
         style={styles.suggestionOptions && styles.suggestionOptions}
       >
         {options &&
@@ -27,6 +27,7 @@ export const AutoSuggestOptions = React.forwardRef(
               key={index}
               id={`${name}-suggestion${index}`}
               selected={selected}
+              onClick={onClick}
               value={opt}
               styles={styles}
             />
