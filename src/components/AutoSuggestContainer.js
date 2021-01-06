@@ -16,6 +16,7 @@ export const AutoSuggestContainer = React.forwardRef(
             noResult = false,
             styles = {},
             loading = false,
+            setLoading = () => {},
             dataType,
             activeDescendant,
             setActiveDescendant
@@ -61,6 +62,7 @@ export const AutoSuggestContainer = React.forwardRef(
             setSearchText(event.target.getAttribute("textvalue"));
             setActiveDescendant(undefined);
             setSearching(false);
+            setLoading(false);
         };
         const doKeyPress = (event) => {
             let highlighted =
@@ -69,6 +71,7 @@ export const AutoSuggestContainer = React.forwardRef(
             switch (event.which) {
                 case keys.ESC:
                     setSearching(false);
+                    setLoading(false);
                     setActiveDescendant(undefined);
                     clearText();
                     break;
@@ -76,6 +79,7 @@ export const AutoSuggestContainer = React.forwardRef(
                 case keys.TAB:
                 case keys.RETURN:
                     setSearching(false);
+                    setLoading(false);
                     if (highlighted) {
                         event.preventDefault();
                         event.stopPropagation();

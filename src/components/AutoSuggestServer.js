@@ -39,11 +39,6 @@ export const AutoSuggestServer = React.forwardRef(
                   });
           }
       }, [searching, searchText, debouncedSearchText, url]);
-      React.useEffect(() => {
-            if (searchText !== debouncedSearchText) {
-                  setLoading(true);
-            }
-      }, [debouncedSearchText, searchText]);
 
       const handleInputChange = (value) => {
           value && setLoading(true);
@@ -67,6 +62,7 @@ export const AutoSuggestServer = React.forwardRef(
                   noResult={noResult}
                   styles={styles}
                   loading={loading}
+                  setLoading={setLoading}
                   activeDescendant={activeDescendant}
                   setActiveDescendant={setActiveDescendant}
                   clearText={() => setSearchText()}

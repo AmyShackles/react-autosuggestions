@@ -24,34 +24,77 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 const ref = React.createRef();
-test("handles server success with data", async () => {
-    await act(async () => {
-        render(
-            <AutoSuggestServer
-                url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                name="Model"
-                type="Server"
-                ref={ref}
-            />
-        );
-    });
-    const input = screen.getByRole("textbox", { name: "Model" });
+describe("handles server success with data",  () => {
+    test("It should handle searching by input", async () => {
+        await act(async () => {
+            render(
+                <AutoSuggestServer
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                    ref={ref}
+                />
+            );
+        });
+        const input = screen.getByRole("textbox", { name: "Model" });
 
-    await act(async () => {
-        fireEvent.change(input, { target: { value: "double" } });
-        await waitFor(() =>
-            expect(screen.queryByText(/Loading/)).toBeInTheDocument()
-        );
-    });
-    await act(async () => {
-        await waitFor(() => {
-            expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+        await act(async () => {
+            fireEvent.change(input, { target: { value: "double" } });
+            await waitFor(() =>
+                expect(screen.queryByText(/Loading/)).toBeInTheDocument()
+            );
+        });
+        await act(async () => {
+            await waitFor(() => {
+                expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+            });
+        });
+        const options = screen.getAllByRole("option");
+        options.forEach((option, index) => {
+            expect(option.getAttribute("textvalue")).toBe(fakeModels[index]);
         });
     });
-    const options = screen.getAllByRole("option");
-    options.forEach((option, index) => {
-        expect(option.getAttribute("textvalue")).toBe(fakeModels[index]);
-    });
+    test("It handles selection of input", async () => {
+        await act(async () => {
+            render(
+                <AutoSuggestServer
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                    ref={ref}
+                />
+            );
+        });
+        const input = screen.getByRole("textbox", { name: "Model" });
+
+        await act(async () => {
+            fireEvent.change(input, { target: { value: "double" } });
+            await waitFor(() =>
+                expect(screen.queryByText(/Loading/)).toBeInTheDocument()
+            );
+        });
+        await act(async () => {
+            await waitFor(() => {
+                expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+            });
+        });
+        const options = screen.getAllByRole("option");
+        options.forEach((option, index) => {
+            expect(option.getAttribute("textvalue")).toBe(fakeModels[index]);
+        });
+        const option = screen.getByRole("option", { name: "Double Demons"});
+        await act(async () => {
+            fireEvent(option, new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+              }));
+              await waitFor(() => {
+                  expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+              })
+        })
+        expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+        expect(input).toHaveValue('Double Demons');
+    })
 });
 test("handles server success without data", async () => {
     server.use(
