@@ -6,72 +6,67 @@ import 'cross-fetch/polyfill';
 
 
 export const AutoSuggestServer = React.forwardRef(
-  ({ url="", name, debounceTime = 200, styles, type }, ref) => {
-      const [options, setOptions] = React.useState([]);
-      const [searchText, setSearchText] = React.useState();
-      const [searching, setSearching] = React.useState(false);
-      const [errored, setErrored] = React.useState(false);
-      const [noResult, setNoResult] = React.useState(false);
-      const debouncedSearchText = useDebounce(searchText, debounceTime);
-      const [loading, setLoading] = React.useState(false);
-      const [activeDescendant, setActiveDescendant] = React.useState();
+    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen }, ref) => {
+        const [options, setOptions] = React.useState([]);
+        const [searchText, setSearchText] = React.useState();
+        const [errored, setErrored] = React.useState(false);
+        const [noResult, setNoResult] = React.useState(false);
+        const debouncedSearchText = useDebounce(searchText, debounceTime);
+        const [loading, setLoading] = React.useState(false);
+        const [activeDescendant, setActiveDescendant] = React.useState();
 
-      React.useEffect(() => {
-          if (searching && searchText && debouncedSearchText) {
-              fetch(`${url}/${encodeURIComponent(debouncedSearchText)}`)
-                  .then((res) => res.json())
-                  .then((data) => {
-                      if (data && data.length) {
-                          setSearching(true);
-                          setOptions(data);
-                          setNoResult(false);
-                      } else {
-                          setSearching(false);
-                          setOptions([]);
-                          setNoResult(true);
-                      }
-                      setLoading(false);
-                      setErrored(false);
-                  })
-                  .catch(() => {
-                      setErrored(true);
-                      setLoading(false);
-                  });
-          }
-      }, [searching, searchText, debouncedSearchText, url]);
-      React.useEffect(() => {
-            if (searchText !== debouncedSearchText) {
-                  setLoading(true);
+        React.useEffect(() => {
+            if (isOpen && searchText && debouncedSearchText) {
+                setLoading(true);
+                fetch(`${url}/${encodeURIComponent(debouncedSearchText)}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data && data.length) {
+                            setIsOpen(true);
+                            setOptions(data);
+                            setNoResult(false);
+                        } else {
+                            setIsOpen(false);
+                            setOptions([]);
+                            setNoResult(true);
+                        }
+                        setLoading(false);
+                        setErrored(false);
+                    })
+                    .catch(() => {
+                        setErrored(true);
+                        setLoading(false);
+                    });
             }
-      }, [debouncedSearchText, searchText]);
+        }, [isOpen, searchText, debouncedSearchText, url]);
 
-      const handleInputChange = (value) => {
-          value && setLoading(true);
-          setSearchText(value);
-      };
+        const handleInputChange = (value) => {
+            setSearchText(value);
+        };
 
-      if (url === "") {
-          throw new Error("AutoSuggestServer requires a url parameter");
-      } else {
-          return (
-              <AutoSuggestContainer
-                  dataType={type}
-                  ref={ref}
-                  name={name}
-                  options={options}
-                  error={errored}
-                  setSearchText={handleInputChange}
-                  searchText={searchText}
-                  searching={searching}
-                  setSearching={setSearching}
-                  noResult={noResult}
-                  styles={styles}
-                  loading={loading}
-                  activeDescendant={activeDescendant}
-                  setActiveDescendant={setActiveDescendant}
-                  clearText={() => setSearchText()}
-              />
-          );
-      }
-  }
+        if (url === "") {
+            throw new Error("AutoSuggestServer requires a url parameter");
+        } else {
+            return (
+                <AutoSuggestContainer
+                    dataType={type}
+                    ref={ref}
+                    name={name}
+                    options={options}
+                    error={errored}
+                    setSearchText={handleInputChange}
+                    searchText={searchText}
+                    openListbox={isOpen}
+                    setOpenListbox={setIsOpen}
+                    noResult={noResult}
+                    styles={styles}
+                    loading={loading}
+                    setLoading={setLoading}
+                    activeDescendant={activeDescendant}
+                    setActiveDescendant={setActiveDescendant}
+                    clearText={() => setSearchText()}
+                />
+            );
+        }
+    }
 );

@@ -1,30 +1,29 @@
 import React from "react";
 import { AutoSuggestContainer } from "./AutoSuggestContainer.js";
 import { alphanumericSort } from "../utils/alphanumericSort.js";
-export const AutoSuggestClient = React.forwardRef(({ name, options, styles, type }, ref) => {
+export const AutoSuggestClient = React.forwardRef(({ name, options, styles, type, isOpen, setIsOpen }, ref) => {
     options = alphanumericSort(options);
-    const [searching, setSearching] = React.useState(false);
     const [searchText, setSearchText] = React.useState();
     const [results, setResults] = React.useState(options);
     const [noResult, setNoResult] = React.useState(false);
     const [activeDescendant, setActiveDescendant] = React.useState();
 
     React.useEffect(() => {
-        if (searching && searchText) {
+        if (isOpen && searchText) {
             let res = options.filter((opt) => opt.startsWith(searchText));
             setResults(res);
             if (res.length >= 1) {
-                setSearching(true);
+                setIsOpen(true);
             }
         }
-    }, [searchText, searching, options]);
+    }, [searchText, isOpen, options]);
 
     React.useEffect(() => {
-        if (searching === false) {
+        if (isOpen === false) {
             setResults([]);
             setNoResult(false);
         }
-    }, [searching]);
+    }, [isOpen]);
 
     const handleInputChange = (value) => {
         setSearchText(value);
@@ -35,9 +34,9 @@ export const AutoSuggestClient = React.forwardRef(({ name, options, styles, type
             ref={ref}
             name={name}
             options={results || []}
-            searching={searching}
+            openListbox={isOpen}
             searchText={searchText}
-            setSearching={setSearching}
+            setOpenListbox={setIsOpen}
             setSearchText={handleInputChange}
             styles={styles}
             dataType={type}

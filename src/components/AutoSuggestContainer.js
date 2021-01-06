@@ -10,12 +10,13 @@ export const AutoSuggestContainer = React.forwardRef(
             error = false,
             setSearchText,
             searchText = "",
-            searching,
-            setSearching,
+            openListbox,
+            setOpenListbox = () => {},
             clearText,
             noResult = false,
             styles = {},
             loading = false,
+            setLoading = () => {},
             dataType,
             activeDescendant,
             setActiveDescendant
@@ -53,14 +54,14 @@ export const AutoSuggestContainer = React.forwardRef(
         const doSearch = (event) => {
             inputRef.current.focus();
             setSearchText(event.target.value);
-            setActiveDescendant(undefined);
-            setSearching(true);
+            setOpenListbox(true);
         };
 
         const copyTextRemoveSuggestions = (event) => {
             setSearchText(event.target.getAttribute("textvalue"));
             setActiveDescendant(undefined);
-            setSearching(false);
+            setOpenListbox(false);
+            setLoading(false);
         };
         const doKeyPress = (event) => {
             let highlighted =
@@ -68,14 +69,17 @@ export const AutoSuggestContainer = React.forwardRef(
                 [...suggestionRef.current.children].find((node) => node.id === activeDescendant);
             switch (event.which) {
                 case keys.ESC:
-                    setSearching(false);
+                    setOpenListbox(false);
+                    setLoading(false);
                     setActiveDescendant(undefined);
                     clearText();
                     break;
 
                 case keys.TAB:
                 case keys.RETURN:
-                    setSearching(false);
+                    setOpenListbox(false);
+                    setLoading(false);
+                    setActiveDescendant(undefined);
                     if (highlighted) {
                         event.preventDefault();
                         event.stopPropagation();
@@ -99,10 +103,9 @@ export const AutoSuggestContainer = React.forwardRef(
         };
 
         const moveUp = (highlighted) => {
-            if (!searching) return;
-            let current = {};
-            if (highlighted) {
-                current = highlighted;
+            if (!openListbox) return;
+            let current = highlighted;
+            if (current && current.previousElementSibling) {
                 current.setAttribute("aria-selected", false);
                 current.classList.remove("highlighted");
                 let prev = current.previousElementSibling;
@@ -119,11 +122,10 @@ export const AutoSuggestContainer = React.forwardRef(
         };
 
         const moveDown = (highlighted) => {
-            if (!searching) return;
-            let current = {};
+            if (!openListbox) return;
+            let current = highlighted;
 
-            if (highlighted) {
-                current = highlighted;
+            if (current && current.nextElementSibling) {
                 current.setAttribute("aria-selected", false);
                 current.classList.remove("highlighted");
                 let next = current.nextElementSibling;
@@ -160,7 +162,7 @@ export const AutoSuggestContainer = React.forwardRef(
                     <div
                         id={`${name}-searchField`}
                         role="combobox"
-                        aria-expanded={searching ? "true" : "false"}
+                        aria-expanded={openListbox ? "true" : "false"}
                         aria-owns={`${name}-input`}
                         aria-haspopup="listbox"
                         aria-controls={`${name}-autosuggest-options`}
@@ -192,12 +194,12 @@ export const AutoSuggestContainer = React.forwardRef(
                             styles.suggestionsContainer
                                 ? {
                                       ...styles.suggestionsContainer,
-                                      display: searching ? "block" : "none"
+                                      display: openListbox ? "block" : "none"
                                   }
-                                : { display: searching ? "block" : "none" }
+                                : { display: openListbox ? "block" : "none" }
                         }
                     >
-                        {searching && options.length > 0 && (
+                        {openListbox && options.length > 0 && (
                             <AutoSuggestOptions
                                 ref={suggestionRef}
                                 id={`${name}-autosuggest-options`}
