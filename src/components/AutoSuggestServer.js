@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 
 
 export const AutoSuggestServer = React.forwardRef(
-    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen }, ref) => {
+    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen, handleChange }, ref) => {
         const [options, setOptions] = React.useState([]);
         const [searchText, setSearchText] = React.useState();
         const [errored, setErrored] = React.useState(false);
@@ -48,6 +48,7 @@ export const AutoSuggestServer = React.forwardRef(
         });
         const handleInputChange = (value) => {
             setSearchText(value);
+            handleChange(value);
         };
 
         if (url === "") {
@@ -70,7 +71,10 @@ export const AutoSuggestServer = React.forwardRef(
                     setLoading={setLoading}
                     activeDescendant={activeDescendant}
                     setActiveDescendant={setActiveDescendant}
-                    clearText={() => setSearchText()}
+                    clearText={() => {
+                        setSearchText();
+                        handleChange();
+                    }}
                 />
             );
         }
