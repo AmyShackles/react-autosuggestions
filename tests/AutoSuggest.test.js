@@ -7,35 +7,27 @@ import React from "react";
 afterEach(cleanup);
 
 const Form = ({ name = "", url = "", options = [], type = "", styles }) => {
-  const [formData, setFormData] = React.useState(null);
-  const make = React.createRef();
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (make.current) {
-      setFormData(make.current.value);
-    }
-  };
+  const [make, setMake] = React.useState();
+  const [formData, setFormData] = React.useState();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormData(`Make: ${make}`)
+  }
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-          <AutoSuggest
-            name={name}
-            type={type}
-            url={url}
-            options={options}
-            ref={make}
-            styles={styles}
-          />
-        </form>
-        <p>{formData && formData}</p>
+      <>
+          <form onSubmit={handleSubmit}>
+              <AutoSuggest name={name} handleChange={setMake} type={type} url={url} options={options} styles={styles} />
+              <button>Submit</button>
+          </form>
+          <p data-testid="Value">{make}</p>
+          {formData && <p data-testid="AfterFormSubmit">{formData}</p>}
       </>
   );  
 };
 describe("AutoSuggest rendering", () => {
   describe("Defaults", () => {
       test("It should default the name of the input to be 'Search'", () => {
-          const ref = React.createRef();
-          render(<AutoSuggest ref={ref} />);
+          render(<AutoSuggest />);
           expect(screen.getByLabelText(/Search/)).toBeInTheDocument();
       });
   });
@@ -171,6 +163,7 @@ describe("Enter key", () => {
       expect(option).toHaveAttribute('aria-selected', "true");
       userEvent.type(input, "{enter}");
       expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("Bentley");
+      expect(screen.getByTestId("Value")).toHaveTextContent("Bentley");
     });
   });
   describe("If an option has not been selected", () => {
@@ -202,6 +195,7 @@ describe("Enter key", () => {
       expect(input).toHaveFocus();
       userEvent.type(input, "{enter}");
       expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("B");
+      expect(screen.getByTestId("Value")).toHaveTextContent("B");
     });
   })
 });
@@ -393,6 +387,7 @@ describe("Escape key", () => {
     expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("B")
     userEvent.type(input, "{esc}");
     expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("")
+    expect(screen.getByTestId("Value")).toHaveTextContent("");
   });
   test("It should focus on the input field", () => {
     render(
@@ -480,6 +475,7 @@ describe("Tab key", () => {
       expect(option).toHaveAttribute('aria-selected', "true");
       userEvent.tab();
       expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("Bentley");
+      expect(screen.getByTestId("Value")).toHaveTextContent("Bentley");
       expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
     });
   });
@@ -512,6 +508,7 @@ describe("Tab key", () => {
       expect(input).toHaveFocus();
       userEvent.tab();
       expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("B");
+      expect(screen.getByTestId("Value")).toHaveTextContent("B");
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
       expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
     });
@@ -532,6 +529,7 @@ describe("Mouse selection", () => {
         const option = screen.getByRole("option", { name: "Bentley" });
         userEvent.click(option);
         expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("Bentley");
+        expect(screen.getByTestId("Value")).toHaveTextContent("Bentley");
         expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
     });
     test("It should remove any aria-activedescendant previously set", () => {
@@ -576,5 +574,34 @@ describe("Clicking outside of the AutoSuggest component", () => {
         const outsideInputField = screen.getByText(/Different input/);
         fireEvent.click(outsideInputField);
         expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("B");
+        expect(screen.getByTestId("Value")).toHaveTextContent("B");
     });
 });
+test('Selection workflow', () => {
+  render(
+    <>
+        <Form
+            name="Make"
+            options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
+            styles={{ searchField: { focus: { color: "#f29" } } }}
+        />
+        <p>Different input"</p>
+    </>
+);
+  const input = screen.getByRole("textbox", { name: "Make" });
+  fireEvent.change(input, { target: { value: "B" } });
+  expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("B");
+  userEvent.type(input, "{arrowdown}");
+  const option = screen.getByRole("option", { name: "Bentley" });
+  expect(input).toHaveAttribute("aria-activedescendant", option.id);
+  expect(screen.getByRole("listbox")).toBeInTheDocument();
+  userEvent.tab();
+  expect(screen.getByRole("textbox", { name: "Make"})).toHaveValue("Bentley");
+  expect(screen.getByTestId("Value")).toHaveTextContent("Bentley");
+  const button = screen.getByRole("button");
+  expect(screen.queryByTestId("AfterFormSubmit")).not.toBeInTheDocument();
+  userEvent.click(button);
+  expect(screen.queryByTestId("AfterFormSubmit")).toBeInTheDocument();
+  expect(screen.queryByTestId("AfterFormSubmit")).toHaveTextContent("Make: Bentley")
+})

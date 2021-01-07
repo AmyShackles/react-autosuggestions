@@ -28,8 +28,21 @@ afterAll(() => server.close());
 const ServerWrapper = ({ url, name, type }) => {
     const ref = React.useRef();
     const [isOpen, setIsOpen] = React.useState(false);
-
-    return <AutoSuggestServer url={url} name={name} type={type} ref={ref} isOpen={isOpen} setIsOpen={setIsOpen} />;
+    const [value, setValue] = React.useState();
+    return (
+        <>
+            <AutoSuggestServer
+                url={url}
+                name={name}
+                type={type}
+                ref={ref}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                handleChange={setValue}
+            />
+            <p data-testid="Value">{value}</p>
+        </>
+    );
 };
 
 describe("AutoSuggest Server variant", () => {
@@ -60,6 +73,7 @@ describe("AutoSuggest Server variant", () => {
             const options = screen.getAllByRole("option");
             options.forEach((option, index) => {
                 expect(option.getAttribute("textvalue")).toBe(fakeModels[index]);
+                expect(option.classList.contains("auto-suggestions"));
             });
         });
         test("It should handle clearing the search field", async () => {
@@ -128,6 +142,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
+            expect(screen.getByTestId("Value")).toHaveTextContent("double");
         });
         test("It handles navigating with the down arrow", async () => {
             await act(async () => {
@@ -157,22 +172,36 @@ describe("AutoSuggest Server variant", () => {
             await act(async () => {
                 userEvent.type(input, "{arrowdown}");
                 await waitFor(() => {
-                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute("aria-selected", "true");
+                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute(
+                        "aria-selected",
+                        "true"
+                    );
                     expect(input).toHaveAttribute(
                         "aria-activedescendant",
                         screen.getByRole("option", { name: "Double Double" }).getAttribute("id")
                     );
                 });
             });
+
             await act(async () => {
                 userEvent.type(input, "{arrowdown}");
                 await waitFor(() => {
-                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute("aria-selected", "true");
+                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute(
+                        "aria-selected",
+                        "true"
+                    );
+                    expect(screen.getByRole("option", { name: "Double Demons" }).classList.contains("highlighted"));
+                    expect(
+                        screen.getByRole("option", { name: "Double Demons" }).classList.contains("auto-suggestions")
+                    );
                     expect(input).toHaveAttribute(
                         "aria-activedescendant",
                         screen.getByRole("option", { name: "Double Demons" }).getAttribute("id")
                     );
-                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute("aria-selected", "false");
+                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute(
+                        "aria-selected",
+                        "false"
+                    );
                 });
             });
             await act(async () => {
@@ -186,19 +215,31 @@ describe("AutoSuggest Server variant", () => {
                         "aria-activedescendant",
                         screen.getByRole("option", { name: "Double Checking This Works" }).getAttribute("id")
                     );
-                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute("aria-selected", "false");
-                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute("aria-selected", "false");
+                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute(
+                        "aria-selected",
+                        "false"
+                    );
+                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute(
+                        "aria-selected",
+                        "false"
+                    );
                 });
             });
             await act(async () => {
                 userEvent.type(input, "{arrowdown}");
                 await waitFor(() => {
-                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute("aria-selected", "true");
+                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute(
+                        "aria-selected",
+                        "true"
+                    );
                     expect(input).toHaveAttribute(
                         "aria-activedescendant",
                         screen.getByRole("option", { name: "Double Double" }).getAttribute("id")
                     );
-                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute("aria-selected", "false");
+                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute(
+                        "aria-selected",
+                        "false"
+                    );
                     expect(screen.getByRole("option", { name: "Double Checking This Works" })).toHaveAttribute(
                         "aria-selected",
                         "false"
@@ -207,6 +248,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
+            expect(screen.getByTestId("Value")).toHaveTextContent("double");
         });
         test("It handles navigating with the up arrow", async () => {
             await act(async () => {
@@ -292,6 +334,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
+            expect(screen.getByTestId("Value")).toHaveTextContent("double");
         });
         test("It handles hitting the enter key with no option selected", async () => {
             await act(async () => {
@@ -326,6 +369,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
+            expect(screen.getByTestId("Value")).toHaveTextContent("double");
         });
         test("It handles hitting the enter key with an option selected", async () => {
             await act(async () => {
@@ -373,6 +417,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("Double Checking This Works");
+            expect(screen.getByTestId("Value")).toHaveTextContent("Double Checking This Works");
             expect(input).not.toHaveAttribute("aria-activedescendant");
         });
         test("It handles other keypress events", async () => {
@@ -400,6 +445,7 @@ describe("AutoSuggest Server variant", () => {
             expect(screen.getByText(/No results found/)).toBeInTheDocument();
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("a");
+            expect(screen.getByTestId("Value")).toHaveTextContent("a");
         });
         test("It handles hitting escape key", async () => {
             await act(async () => {
@@ -458,6 +504,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("");
+            expect(screen.getByTestId("Value")).toHaveTextContent("");
         });
         test("It handles selection of option", async () => {
             await act(async () => {
@@ -499,6 +546,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("Double Demons");
+            expect(screen.getByTestId("Value")).toHaveTextContent("Double Demons");
         });
     });
     test("handles server success without data", async () => {
@@ -532,6 +580,8 @@ describe("AutoSuggest Server variant", () => {
             });
         });
         expect(screen.getByText(/No results found/)).toBeInTheDocument();
+        expect(input).toHaveValue("double");
+        expect(screen.getByTestId("Value")).toHaveTextContent("double");
     });
     test("handles server error", async () => {
         server.use(

@@ -1,13 +1,13 @@
 {
   "name": "react-autosuggestions",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "keywords": [
     "React",
     "auto-suggest",
     "accessible"
   ],
   "author": "Amy Shackles",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "main": "dist/AutoSuggest.js",
   "peerDependencies": {
     "react": "^17.0.1",
