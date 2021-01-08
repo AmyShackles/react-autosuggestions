@@ -1,6 +1,6 @@
 {
   "name": "react-autosuggestions",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "keywords": [
     "React",
     "auto-suggest",
@@ -8,6 +8,10 @@
   ],
   "author": "Amy Shackles",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AmyShackles/react-autosuggestions.git"
+  },
   "main": "dist/AutoSuggest.js",
   "peerDependencies": {
     "react": "^17.0.1",
