@@ -13,18 +13,41 @@ export const AutoSuggest = ({
     options = [],
     handleChange  =  () => {}
 }) => {
+    
     const combinedStyles = {
-        ...defaultOptions,
-        ...styles,
+        announcement: {
+            ...defaultOptions.announcement,
+            ...styles.announcement
+        },
+        combobox: {
+            ...defaultOptions.combobox,
+            ...styles.combobox,
+        },
         searchField: {
             ...defaultOptions.searchField,
             ...styles.searchField,
             focus: {
                 ...defaultOptions.searchField.focus,
-                ...styles.searchField.focus
+                ...(styles.searchField && styles.searchField.focus && {...styles.searchField.focus })
             }
+        },
+        searchLabel: {
+            ...defaultOptions.searchLabel,
+            ...styles.searchLabel
+        },
+        suggestionsContainer: {
+            ...defaultOptions.suggestionsContainer,
+            ...styles.suggestionsContainer
+        },
+        suggestionOptions: {
+            ...defaultOptions.suggestionOptions,
+            ...styles.suggestionOptions
+        },
+        suggestionOption: {
+            ...defaultOptions.suggestionOption,
+            ...styles.suggestionOption
         }
-    };
+    }
     const [isOpen, setIsOpen] = React.useState(false);
     const ref = React.useRef(null);
 
