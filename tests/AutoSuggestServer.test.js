@@ -5,6 +5,7 @@ import React from "react";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import userEvent from "@testing-library/user-event";
+import { defaultOptions } from "../src/utils/defaultOptions.js";
 
     const fakeModels = [
         "Double Double",
@@ -39,6 +40,7 @@ const ServerWrapper = ({ url, name, type }) => {
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 handleChange={setValue}
+                styles={defaultOptions}
             />
             <p data-testid="Value">{value}</p>
         </>
@@ -61,9 +63,17 @@ describe("AutoSuggest Server variant", () => {
 
             await act(async () => {
                 fireEvent.change(input, { target: { value: "double" } });
-                await waitFor(() =>
-                    expect(screen.queryByText(/Loading/)).toBeInTheDocument()
-                );
+                await waitFor(() => {
+                    expect(screen.queryByText(/Loading/)).toBeInTheDocument();
+                });
+            });
+            expect(screen.queryByText(/Loading/)).toHaveStyle({
+                position: "absolute",
+                clip: "rect(0 0 0 0)",
+                clipPath: "inset(50%)",
+                height: "1px",
+                width: "1px",
+                overflow: "hidden"
             });
             await act(async () => {
                 await waitFor(() => {
@@ -246,6 +256,11 @@ describe("AutoSuggest Server variant", () => {
                     );
                 });
             });
+            expect(
+                screen.getByRole("option", { name: "Double Checking This Works" }).classList.contains("highlighted")
+            ).toBe(false);
+            expect(screen.getByRole("option", { name: "Double Double" }).classList.contains("highlighted")).toBe(true);
+            expect(screen.getByRole("option", { name: "Double Demons" }).classList.contains("highlighted")).toBe(false);
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
             expect(screen.getByTestId("Value")).toHaveTextContent("double");
@@ -332,6 +347,11 @@ describe("AutoSuggest Server variant", () => {
                     expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute("aria-selected", "false");
                 });
             });
+            expect(
+                screen.getByRole("option", { name: "Double Checking This Works" }).classList.contains("highlighted")
+            ).toBe(true);
+            expect(screen.getByRole("option", { name: "Double Double" }).classList.contains("highlighted")).toBe(false);
+            expect(screen.getByRole("option", { name: "Double Demons" }).classList.contains("highlighted")).toBe(false);
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
             expect(screen.getByTestId("Value")).toHaveTextContent("double");
@@ -367,6 +387,7 @@ describe("AutoSuggest Server variant", () => {
                     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
                 });
             });
+            expect(input).not.toHaveAttribute("aria-activedescendant");
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
             expect(screen.getByTestId("Value")).toHaveTextContent("double");
@@ -472,7 +493,6 @@ describe("AutoSuggest Server variant", () => {
             options.forEach((option, index) => {
                 expect(option.getAttribute("textvalue")).toBe(fakeModels[index]);
             });
-            const option = screen.getByRole("option", { name: "Double Demons" });
             await act(async () => {
                 userEvent.type(input, "{arrowup}");
                 await waitFor(() => {
@@ -504,6 +524,7 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("");
+            expect(input).not.toHaveAttribute("aria-activedescendant");
             expect(screen.getByTestId("Value")).toHaveTextContent("");
         });
         test("It handles selection of option", async () => {

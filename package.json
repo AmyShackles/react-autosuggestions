@@ -48,7 +48,8 @@
       "\\.css$": "identity-obj-proxy"
     },
     "collectCoverageFrom": [
-      "src/components/**/*.js"
+      "src/components/**/*.js",
+      "src/utils/**/*.js"
     ],
     "coverageThreshold": {
       "global": {

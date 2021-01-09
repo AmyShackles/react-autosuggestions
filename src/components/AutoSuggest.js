@@ -11,9 +11,8 @@ export const AutoSuggest = ({
     debounceTime = 200,
     styles = defaultOptions,
     options = [],
-    handleChange  =  () => {}
+    handleChange
 }) => {
-    
     const combinedStyles = {
         announcement: {
             ...defaultOptions.announcement,
@@ -21,14 +20,14 @@ export const AutoSuggest = ({
         },
         combobox: {
             ...defaultOptions.combobox,
-            ...styles.combobox,
+            ...styles.combobox
         },
         searchField: {
             ...defaultOptions.searchField,
             ...styles.searchField,
             focus: {
                 ...defaultOptions.searchField.focus,
-                ...(styles.searchField && styles.searchField.focus && {...styles.searchField.focus })
+                ...(styles.searchField && styles.searchField.focus && { ...styles.searchField.focus })
             }
         },
         searchLabel: {
@@ -47,7 +46,7 @@ export const AutoSuggest = ({
             ...defaultOptions.suggestionOption,
             ...styles.suggestionOption
         }
-    }
+    };
     const [isOpen, setIsOpen] = React.useState(false);
     const ref = React.useRef(null);
 
@@ -67,15 +66,7 @@ export const AutoSuggest = ({
         };
     }, []);
 
-    if (!type) {
-        if (url) {
-            type = "server";
-        } else {
-            type = "client";
-        }
-    }
-
-    if (type === "server") {
+    if (type === "server" || url) {
         return (
             <AutoSuggestServer
                 ref={ref}

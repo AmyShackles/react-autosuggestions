@@ -4,19 +4,23 @@ import { alphanumericSort } from "../utils/alphanumericSort.js";
 
 export const AutoSuggestClient = React.forwardRef(
     ({ name, options, styles, type, isOpen, setIsOpen, handleChange }, ref) => {
-        options = alphanumericSort(options);
+        const [sortedOptions, optionType] = alphanumericSort(options);
         const [searchText, setSearchText] = React.useState();
-        const [results, setResults] = React.useState(options);
+        const [results, setResults] = React.useState(sortedOptions);
         const [noResult, setNoResult] = React.useState(false);
         const [activeDescendant, setActiveDescendant] = React.useState();
 
         React.useEffect(() => {
             if (isOpen && searchText) {
-                let res = options.filter((opt) => opt.startsWith(searchText));
-                setResults(res);
-                if (res.length >= 1) {
-                    setIsOpen(true);
+                let res;
+                if (optionType === "string") {
+                    res = options.filter((opt) => opt.startsWith(searchText));
                 }
+                if (optionType === "object") {
+                    res = options.filter((opt) => opt.value.startsWith(searchText));
+                }
+                setResults(res);
+                res.length >= 1 && setIsOpen(true);
             }
         }, [searchText, isOpen, options]);
 
@@ -35,7 +39,7 @@ export const AutoSuggestClient = React.forwardRef(
 
         const handleInputChange = (value) => {
             setSearchText(value);
-            handleChange(value);
+            handleChange && handleChange(value);
         };
 
         return (
@@ -54,7 +58,7 @@ export const AutoSuggestClient = React.forwardRef(
                 setActiveDescendant={setActiveDescendant}
                 clearText={() => {
                     setSearchText();
-                    handleChange();
+                    handleChange && handleChange();
                 }}
             />
         );

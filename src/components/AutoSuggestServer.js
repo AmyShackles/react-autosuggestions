@@ -48,7 +48,7 @@ export const AutoSuggestServer = React.forwardRef(
         });
         const handleInputChange = (value) => {
             setSearchText(value);
-            handleChange(value);
+            handleChange && handleChange(value);
         };
 
         if (url === "") {
@@ -73,7 +73,7 @@ export const AutoSuggestServer = React.forwardRef(
                     setActiveDescendant={setActiveDescendant}
                     clearText={() => {
                         setSearchText();
-                        handleChange();
+                        handleChange && handleChange();
                     }}
                 />
             );

@@ -5,5 +5,6 @@ const customRender = (ui, options) =>
   render(ui, { queries: { ...queries, ...customQueries }, ...options });
 
 export * from "@testing-library/react";
+export * from "@testing-library/jest-dom";
 
 export { customRender as render };

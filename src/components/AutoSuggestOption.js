@@ -1,24 +1,27 @@
 import React from "react";
 
 export const AutoSuggestOption = ({
-  id,
-  styles,
-  value,
-  classNames,
-  selected,
-  onClick,
+    id,
+    styles,
+    value,
+    selected,
+    onClick,
+    name = undefined,
+    abbr = undefined
 }) => {
-  return (
-    <li
-      role="option"
-      id={id}
-      aria-selected={id === selected}
-      className={`auto-suggestions${classNames ? ` ${classNames}` : ""}`}
-      style={styles.suggestionOption && styles.suggestionOption}
-      textvalue={value}
-      onClick={onClick}
-    >
-      {value}
-    </li>
-  );
+    return (
+        <li
+            role="option"
+            id={id}
+            aria-selected={id === selected}
+            className={id === selected ? `auto-suggestions highlighted` : 'auto-suggestions'}
+            style={styles.suggestionOption && styles.suggestionOption}
+            textvalue={value}
+            onClick={onClick}
+            name={name && name}
+            abbr={abbr && abbr}
+        >
+            {value}
+        </li>
+    );
 };

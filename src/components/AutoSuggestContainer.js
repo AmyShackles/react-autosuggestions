@@ -1,7 +1,6 @@
 import React from "react";
 import { AutoSuggestOptions } from "./AutoSuggestOptions.js";
 
-
 export const AutoSuggestContainer = React.forwardRef(
     (
         {
@@ -11,10 +10,10 @@ export const AutoSuggestContainer = React.forwardRef(
             setSearchText,
             searchText = "",
             openListbox,
-            setOpenListbox = () => {},
+            setOpenListbox,
             clearText,
             noResult = false,
-            styles = {},
+            styles,
             loading = false,
             setLoading = () => {},
             dataType,
@@ -106,17 +105,11 @@ export const AutoSuggestContainer = React.forwardRef(
             if (!openListbox) return;
             let current = highlighted;
             if (current && current.previousElementSibling) {
-                current.setAttribute("aria-selected", false);
-                current.classList.remove("highlighted");
                 let prev = current.previousElementSibling;
-                prev && prev.setAttribute("aria-selected", true);
-                prev && prev.classList.add("highlighted");
                 prev && setActiveDescendant(prev.id);
                 highlighted = false;
             } else {
                 current = suggestionRef.current.lastChild;
-                current.classList.add("highlighted");
-                current.setAttribute("aria-selected", true);
                 setActiveDescendant(current.id);
             }
         };
@@ -126,17 +119,11 @@ export const AutoSuggestContainer = React.forwardRef(
             let current = highlighted;
 
             if (current && current.nextElementSibling) {
-                current.setAttribute("aria-selected", false);
-                current.classList.remove("highlighted");
                 let next = current.nextElementSibling;
-                next && next.classList.add("highlighted");
-                next && next.setAttribute("aria-selected", true);
                 next && setActiveDescendant(next.id);
                 highlighted = false;
             } else {
                 current = suggestionRef.current.firstChild;
-                current.classList.add("highlighted");
-                current.setAttribute("aria-selected", true);
                 setActiveDescendant(current.id);
             }
         };
