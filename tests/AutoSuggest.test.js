@@ -6,7 +6,7 @@ import React from "react";
 
 afterEach(cleanup);
 
-const Form = ({ name = "", url = "", options = [], type = "", styles, handleChange }) => {
+const Form = ({ name = "", url = "", options = [], type = "", styles, handleChange, disabled }) => {
     const [make, setMake] = React.useState();
     const [formData, setFormData] = React.useState();
     const handleSubmit = (e) => {
@@ -23,6 +23,7 @@ const Form = ({ name = "", url = "", options = [], type = "", styles, handleChan
                     url={url}
                     options={options}
                     styles={styles}
+                    disabled={disabled ? true : false}
                 />
                 <button>Submit</button>
             </form>
@@ -575,4 +576,34 @@ test("Selection workflow", () => {
     userEvent.click(button);
     expect(screen.queryByTestId("AfterFormSubmit")).toBeInTheDocument();
     expect(screen.queryByTestId("AfterFormSubmit")).toHaveTextContent("Make: Bentley");
+});
+test("Input should be disabled if disabled evaluates to true", () => {
+    render(
+        <>
+            <Form
+                name="Make"
+                options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
+                styles={{ searchField: { focus: { color: "#f29" } } }}
+                disabled
+            />
+            <p>Different input"</p>
+        </>
+    );
+    const input = screen.getByRole("textbox", { name: "Make" });
+    expect(input).toHaveAttribute("disabled");
+});
+test("Input should not be disabled if disabled does not evaluate to true", () => {
+    render(
+        <>
+            <Form
+                name="Make"
+                options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
+                styles={{ searchField: { focus: { color: "#f29" } } }}
+                disabled={false}
+            />
+            <p>Different input"</p>
+        </>
+    );
+    const input = screen.getByRole("textbox", { name: "Make" });
+    expect(input).not.toHaveAttribute("disabled");
 });

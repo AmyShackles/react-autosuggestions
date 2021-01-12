@@ -18,7 +18,8 @@ export const AutoSuggestContainer = React.forwardRef(
             setLoading = () => {},
             dataType,
             activeDescendant,
-            setActiveDescendant
+            setActiveDescendant,
+            disabled
         },
         inputRef
     ) => {
@@ -171,6 +172,7 @@ export const AutoSuggestContainer = React.forwardRef(
                             aria-labelledby={`${name}-label`}
                             style={styles.searchField && styles.searchField}
                             aria-activedescendant={activeDescendant}
+                            disabled={disabled ? true : false}
                         />
                     </div>
                     {loading && <p style={styles.announcement && styles.announcement}>Loading {label} options</p>}
