@@ -3,7 +3,7 @@ import { AutoSuggestContainer } from "./AutoSuggestContainer.js";
 import { alphanumericSort } from "../utils/alphanumericSort.js";
 
 export const AutoSuggestClient = React.forwardRef(
-    ({ name, options, styles, type, isOpen, setIsOpen, handleChange }, ref) => {
+    ({ name, options, styles, type, isOpen, setIsOpen, handleChange, disabled }, ref) => {
         const [sortedOptions, optionType] = alphanumericSort(options);
         const [searchText, setSearchText] = React.useState();
         const [results, setResults] = React.useState(sortedOptions);
@@ -60,6 +60,7 @@ export const AutoSuggestClient = React.forwardRef(
                     setSearchText();
                     handleChange && handleChange();
                 }}
+                disabled={disabled}
             />
         );
     }

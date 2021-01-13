@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 
 
 export const AutoSuggestServer = React.forwardRef(
-    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen, handleChange }, ref) => {
+    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen, handleChange, disabled }, ref) => {
         const [options, setOptions] = React.useState([]);
         const [searchText, setSearchText] = React.useState();
         const [errored, setErrored] = React.useState(false);
@@ -75,6 +75,7 @@ export const AutoSuggestServer = React.forwardRef(
                         setSearchText();
                         handleChange && handleChange();
                     }}
+                    disabled={disabled}
                 />
             );
         }
