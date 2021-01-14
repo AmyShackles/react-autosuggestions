@@ -148,3 +148,7 @@ li:hover, li.highlighted {
 - If no results match the text entered (whether that means the fetch request resulted in an empty list or if the options list does not include anything that starts with the text value), a paragraph tag is displayed saying "No results found"
 - With an AutoSuggestServer component, if the fetch fails, a paragraph tag is displayed saying "Results could not be fetched"
 - With an AutoSuggestServer component, a loading spinner is shown on the input field while the fetch request is being sent (and while the search text doesn't equal the same value as the debounced search text)
+
+### Credit
+
+Logic greatly inspired by the work of Dennis Lembree (@dennisl) at https://github.com/weboverhauls/demos
