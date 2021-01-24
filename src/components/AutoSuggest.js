@@ -12,7 +12,8 @@ export const AutoSuggest = ({
     styles = defaultOptions,
     options = [],
     handleChange,
-    disabled = false
+    disabled = false,
+    value
 }) => {
     const combinedStyles = {
         announcement: {
@@ -80,6 +81,7 @@ export const AutoSuggest = ({
                 setIsOpen={setIsOpen}
                 handleChange={handleChange}
                 disabled={disabled}
+                value={value}
             />
         );
     }
@@ -94,6 +96,7 @@ export const AutoSuggest = ({
             setIsOpen={setIsOpen}
             handleChange={handleChange}
             disabled={disabled}
+            value={value}
         />
     );
 };
