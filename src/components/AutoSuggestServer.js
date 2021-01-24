@@ -21,7 +21,6 @@ export const AutoSuggestServer = React.forwardRef(
                     .then((res) => res.json())
                     .then((data) => {
                         if (data && data.length) {
-                            setIsOpen(true);
                             setOptions(data);
                             setNoResult(false);
                         } else {
@@ -46,7 +45,7 @@ export const AutoSuggestServer = React.forwardRef(
             }
         });
         const handleInputChange = (val) => {
-            handleChange(val);;
+            handleChange(val);
         };
 
         if (url === "") {
