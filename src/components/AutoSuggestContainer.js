@@ -142,7 +142,7 @@ export const AutoSuggestContainer = React.forwardRef(
                     data-type={dataType}
                     style={styles.announcement && styles.announcement}
                 >
-                    {options && options.length > 0
+                    {openListbox && options && options.length > 0
                         ? `${options.length} suggestions displayed.  To navigate, use up and down arrow keys.`
                         : ""}
                 </div>

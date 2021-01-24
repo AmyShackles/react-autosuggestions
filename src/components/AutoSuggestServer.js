@@ -6,18 +6,17 @@ import fetch from "node-fetch";
 
 
 export const AutoSuggestServer = React.forwardRef(
-    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen, handleChange, disabled }, ref) => {
+    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen, handleChange, disabled, value }, ref) => {
         const [options, setOptions] = React.useState([]);
-        const [searchText, setSearchText] = React.useState();
         const [errored, setErrored] = React.useState(false);
         const [noResult, setNoResult] = React.useState(false);
-        const debouncedSearchText = useDebounce(searchText, debounceTime);
+        const debouncedSearchText = useDebounce(value, debounceTime);
         const [loading, setLoading] = React.useState(false);
         const [activeDescendant, setActiveDescendant] = React.useState();
 
         React.useEffect(() => {
-            if (isOpen && searchText) setLoading(true);
-            if (isOpen && searchText && debouncedSearchText && searchText === debouncedSearchText) {
+            if (isOpen && value) setLoading(true);
+            if (isOpen && value && debouncedSearchText && value === debouncedSearchText) {
                 fetch(`${url}/${encodeURIComponent(debouncedSearchText)}`)
                     .then((res) => res.json())
                     .then((data) => {
@@ -38,17 +37,16 @@ export const AutoSuggestServer = React.forwardRef(
                         setLoading(false);
                     });
             }
-        }, [isOpen, searchText, debouncedSearchText, url]);
+        }, [isOpen, value, debouncedSearchText, url]);
 
         React.useEffect(() => {
-            if (!searchText) {
+            if (!value) {
                 setLoading(false);
                 setIsOpen(false);
             }
         });
-        const handleInputChange = (value) => {
-            setSearchText(value);
-            handleChange && handleChange(value);
+        const handleInputChange = (val) => {
+            handleChange(val);;
         };
 
         if (url === "") {
@@ -62,7 +60,7 @@ export const AutoSuggestServer = React.forwardRef(
                     options={options}
                     error={errored}
                     setSearchText={handleInputChange}
-                    searchText={searchText}
+                    searchText={value}
                     openListbox={isOpen}
                     setOpenListbox={setIsOpen}
                     noResult={noResult}
@@ -72,8 +70,7 @@ export const AutoSuggestServer = React.forwardRef(
                     activeDescendant={activeDescendant}
                     setActiveDescendant={setActiveDescendant}
                     clearText={() => {
-                        setSearchText();
-                        handleChange && handleChange();
+                        handleChange();
                     }}
                     disabled={disabled}
                 />

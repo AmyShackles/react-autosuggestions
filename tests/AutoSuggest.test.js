@@ -1,12 +1,30 @@
 import { AutoSuggest } from "../src/components/AutoSuggest.js";
-import { render, screen, fireEvent, cleanup } from "./test-utils.js";
+import { render, screen, fireEvent, act, waitFor } from "./test-utils.js";
 import "@testing-library/jest-dom/extend-expect";
 import userEvent from "@testing-library/user-event";
 import React from "react";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
 
-afterEach(cleanup);
+const countries = ["United Arab Emirates", "United Kingdom", "United States"];
+const states = ["AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA"];
 
-const Form = ({ name = "", url = "", options = [], type = "", styles, handleChange, disabled }) => {
+const server = setupServer(
+    rest.get("https://ntsb-server.herokuapp.com/api/accidents/countryList/:country", (req, res, ctx) => {
+        const { country } = req.params;
+        return res(ctx.json(countries.filter((val) => val.toUpperCase().startsWith(country.toUpperCase()))));
+    }),
+    rest.get("https://ntsb-server.herokuapp.com/api/accidents/stateList/:state", (req, res, ctx) => {
+        const { state } = req.params;
+        return res(ctx.json(states.filter((val => val.toUpperCase().startsWith(state.toUpperCase())))))
+    })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+const Form = ({ name = "", url = "", options = [], type = "", styles, handleChange, disabled, value }) => {
     const [make, setMake] = React.useState();
     const [formData, setFormData] = React.useState();
     const handleSubmit = (e) => {
@@ -19,6 +37,7 @@ const Form = ({ name = "", url = "", options = [], type = "", styles, handleChan
                 <AutoSuggest
                     name={name}
                     handleChange={handleChange ? handleChange : setMake}
+                    value={value ? value : make}
                     type={type}
                     url={url}
                     options={options}
@@ -211,36 +230,6 @@ describe("Enter key", () => {
             expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("Bentley");
             expect(screen.getByTestId("Value")).toHaveTextContent("Bentley");
         });
-        test("It should call handleChange", () => {
-          const mock = jest.fn(e => console.log(e));
-          render(
-              <Form
-                  name="Make"
-                  options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
-                  styles={{ searchField: { focus: { color: "#f29" } } }}
-                  handleChange={mock}
-              />
-          );
-          let input = screen.queryByRole("textbox");
-          fireEvent.change(input, { target: { value: "B" } });
-          expect(screen.getByRole("option", { name: "Bentley" }));
-          expect(screen.getByRole("option", { name: "BMW" }));
-          expect(screen.getByRole("option", { name: "Buick" }));
-          expect(screen.queryByRole("option", { name: "Acura" })).toBeNull();
-          expect(screen.queryByRole("option", { name: "Audi" })).toBeNull();
-          expect(screen.queryByRole("option", { name: "Cadillac" })).toBeNull();
-          expect(screen.queryByRole("option", { name: "Chevrolet" })).toBeNull();
-          userEvent.type(input, "{arrowup}");
-          userEvent.type(input, "{arrowup}");
-          userEvent.type(input, "{arrowup}");
-          expect(input).toHaveFocus();
-          const option = screen.getByRole("option", { name: "Bentley" });
-          expect(option).toHaveAttribute("aria-selected", "true");
-          userEvent.type(input, "{enter}");
-          expect(mock).toHaveBeenCalledWith("B");
-          expect(mock).toHaveBeenCalledWith("Bentley");
-          expect(mock).toHaveBeenCalledTimes(2);
-      });
     });
     describe("If an option has not been selected", () => {
         test("It should keep the text previously entered into the input field", () => {
@@ -256,6 +245,7 @@ describe("Enter key", () => {
             expect(screen.getByRole("option", { name: "Bentley" }));
             expect(screen.getByRole("option", { name: "BMW" }));
             expect(screen.getByRole("option", { name: "Buick" }));
+            const announcement = 
             expect(screen.queryByRole("option", { name: "Acura" })).toBeNull();
             expect(screen.queryByRole("option", { name: "Audi" })).toBeNull();
             expect(screen.queryByRole("option", { name: "Cadillac" })).toBeNull();
@@ -365,7 +355,7 @@ describe("Up arrow", () => {
 
 describe("Escape key", () => {
     test("It should collapse the listbox", () => {
-        render(
+        const { queryById } = render(
             <Form
                 name="Make"
                 options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]}
@@ -375,8 +365,12 @@ describe("Escape key", () => {
         const input = screen.getByRole("textbox", { name: "Make" });
         fireEvent.change(input, { target: { value: "B" } });
         expect(screen.getByRole("listbox")).toBeInTheDocument();
+        const makeAnnouncement = queryById("Make-announcement");
+        expect(makeAnnouncement).toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.")
         userEvent.type(input, "{esc}");
         expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        expect(makeAnnouncement).not.toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.")
+
     });
     test("It should clear the textbox", () => {
         render(
@@ -606,4 +600,171 @@ test("Input should not be disabled if disabled does not evaluate to true", () =>
     );
     const input = screen.getByRole("textbox", { name: "Make" });
     expect(input).not.toHaveAttribute("disabled");
+});
+test("Input value should update if changed -- server", async () => {
+    const StateAndCountry = () => {
+        const [country, setCountry] = React.useState();
+        const [state, setState] = React.useState();
+        const [disabled, setDisabled] = React.useState();
+
+        React.useEffect(() => {
+            if (country && country !== "United States") {
+                setDisabled(true);
+                setState("");
+            }
+        }, [country]);
+
+        return (
+            <>
+                <AutoSuggest
+                    url="https://ntsb-server.herokuapp.com/api/accidents/countryList"
+                    name="Country"
+                    handleChange={setCountry}
+                    value={country}
+                />
+                <AutoSuggest
+                    url="https://ntsb-server.herokuapp.com/api/accidents/stateList"
+                    name="State"
+                    handleChange={setState}
+                    disabled={disabled}
+                    value={state}
+                />
+                <p data-testid="Country-value">{country}</p>
+                <p data-testid="State-value">{state}</p>
+            </>
+        );
+    };
+    const { queryById } = render(<StateAndCountry />);
+    const state = screen.getByRole("textbox", { name: "State" });
+    await act(async () => {
+        fireEvent.change(state, { target: { value: "AK" } });
+        await waitFor(() => expect(screen.queryByText(/Loading/)).toBeInTheDocument());
+    });
+    await act(async () => {
+        await waitFor(() => {
+            expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+        });
+    });
+    const stateAnnouncement = queryById("State-announcement");
+    expect(stateAnnouncement).toHaveTextContent("1 suggestions displayed. To navigate, use up and down arrow keys.");
+    const stateOption = screen.getByRole("option", { name: "AK" });
+    await act(async () => {
+        fireEvent(
+            stateOption,
+            new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true
+            })
+        );
+        await waitFor(() => {
+            expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        });
+    });
+    expect(state).toHaveValue("AK");
+    expect(screen.getByTestId("State-value")).toHaveTextContent("AK");
+    const country = screen.getByRole("textbox", { name: "Country" });
+    await act(async () => {
+        fireEvent.change(country, { target: { value: "United" } });
+        await waitFor(() => expect(screen.queryByText(/Loading/)).toBeInTheDocument());
+    });
+    await act(async () => {
+        await waitFor(() => {
+            expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+        });
+    });
+    const countryAnnouncement = queryById("Country-announcement");
+    expect(countryAnnouncement).toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.");
+    const countryOption = screen.getByRole("option", { name: "United Kingdom" });
+    await act(async () => {
+        fireEvent(
+            countryOption,
+            new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true
+            })
+        );
+        await waitFor(() => {
+            expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        });
+    });
+    expect(country).toHaveValue("United Kingdom");
+    expect(screen.getByTestId("Country-value")).toHaveTextContent("United Kingdom");
+    expect(screen.getByRole("textbox", { name: "State" })).not.toHaveValue();
+    expect(screen.getByTestId("State-value")).toHaveTextContent("");
+    expect(stateAnnouncement).not.toHaveTextContent(
+        "1 suggestions displayed. To navigate, use up and down arrow keys."
+    );
+    expect(countryAnnouncement).not.toHaveTextContent(
+        "3 suggestions displayed. To navigate, use up and down arrow keys."
+    );
+});
+test("Input value should update if changed -- client", async () => {
+    const StateAndCountryClient = () => {
+        const [country, setCountry] = React.useState();
+        const [state, setState] = React.useState();
+        const [disabled, setDisabled] = React.useState();
+
+        React.useEffect(() => {
+            if (country && country !== "United States") {
+                setDisabled(true);
+                setState("");
+            }
+        }, [country]);
+
+        return (
+            <>
+                <AutoSuggest name="Country" handleChange={setCountry} options={countries} value={country} />
+                <AutoSuggest name="State" handleChange={setState} options={states} disabled={disabled} value={state} />
+                <p data-testid="Country-value">{country}</p>
+                <p data-testid="State-value">{state}</p>
+            </>
+        );
+    };
+    const { queryById } = render(<StateAndCountryClient />);
+    const state = screen.getByRole("textbox", { name: "State" });
+    fireEvent.change(state, { target: { value: "AK" } });
+    const stateAnnouncement = queryById("State-announcement");
+    expect(stateAnnouncement).toHaveTextContent("1 suggestions displayed. To navigate, use up and down arrow keys.");
+    const stateOption = screen.getByRole("option", { name: "AK" });
+    await act(async () => {
+        fireEvent(
+            stateOption,
+            new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true
+            })
+        );
+        await waitFor(() => {
+            expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        });
+    });
+    expect(state).toHaveValue("AK");
+    expect(screen.getByTestId("State-value")).toHaveTextContent("AK");
+    const country = screen.getByRole("textbox", { name: "Country" });
+    fireEvent.change(country, { target: { value: "United" } });
+    const countryAnnouncement = queryById("Country-announcement");
+    expect(countryAnnouncement).toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.");
+    const countryOption = screen.getByRole("option", { name: "United Kingdom" });
+    await act(async () => {
+        fireEvent(
+            countryOption,
+            new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true
+            })
+        );
+        await waitFor(() => {
+            expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        });
+    });
+    expect(country).toHaveValue("United Kingdom");
+    expect(screen.getByTestId("Country-value")).toHaveTextContent("United Kingdom");
+    expect(screen.getByRole("textbox", { name: "State" })).not.toHaveValue();
+    expect(screen.getByTestId("State-value")).toHaveTextContent("");
+    expect(stateAnnouncement).not.toHaveTextContent(
+        "1 suggestions displayed. To navigate, use up and down arrow keys."
+    );
+    expect(countryAnnouncement).not.toHaveTextContent(
+        "3 suggestions displayed. To navigate, use up and down arrow keys."
+    );
 });

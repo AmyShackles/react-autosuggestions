@@ -37,12 +37,13 @@ const ServerWrapper = ({ url, name, type }) => {
                 name={name}
                 type={type}
                 ref={ref}
+                value={value}
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 handleChange={setValue}
                 styles={defaultOptions}
             />
-            <p data-testid="Value">{value}</p>
+            <p data-testid={`${name}-value`}>{value}</p>
         </>
     );
 };
@@ -50,15 +51,13 @@ const ServerWrapper = ({ url, name, type }) => {
 describe("AutoSuggest Server variant", () => {
     describe("handles server success with data",  () => {
         test("It should handle searching by input", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -87,15 +86,13 @@ describe("AutoSuggest Server variant", () => {
             });
         });
         test("It should handle clearing the search field", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -120,15 +117,13 @@ describe("AutoSuggest Server variant", () => {
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
         });
         test("It handles hitting the tab key", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -152,18 +147,16 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
-            expect(screen.getByTestId("Value")).toHaveTextContent("double");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("double");
         });
         test("It handles navigating with the down arrow", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -263,18 +256,16 @@ describe("AutoSuggest Server variant", () => {
             expect(screen.getByRole("option", { name: "Double Demons" }).classList.contains("highlighted")).toBe(false);
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
-            expect(screen.getByTestId("Value")).toHaveTextContent("double");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("double");
         });
         test("It handles navigating with the up arrow", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -306,7 +297,10 @@ describe("AutoSuggest Server variant", () => {
             await act(async () => {
                 userEvent.type(input, "{arrowup}");
                 await waitFor(() => {
-                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute("aria-selected", "true");
+                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute(
+                        "aria-selected",
+                        "true"
+                    );
                     expect(input).toHaveAttribute(
                         "aria-activedescendant",
                         screen.getByRole("option", { name: "Double Demons" }).getAttribute("id")
@@ -320,12 +314,18 @@ describe("AutoSuggest Server variant", () => {
             await act(async () => {
                 userEvent.type(input, "{arrowup}");
                 await waitFor(() => {
-                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute("aria-selected", "true");
+                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute(
+                        "aria-selected",
+                        "true"
+                    );
                     expect(input).toHaveAttribute(
                         "aria-activedescendant",
                         screen.getByRole("option", { name: "Double Double" }).getAttribute("id")
                     );
-                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute("aria-selected", "false");
+                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute(
+                        "aria-selected",
+                        "false"
+                    );
                     expect(screen.getByRole("option", { name: "Double Checking This Works" })).toHaveAttribute(
                         "aria-selected",
                         "false"
@@ -343,8 +343,14 @@ describe("AutoSuggest Server variant", () => {
                         "aria-activedescendant",
                         screen.getByRole("option", { name: "Double Checking This Works" }).getAttribute("id")
                     );
-                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute("aria-selected", "false");
-                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute("aria-selected", "false");
+                    expect(screen.getByRole("option", { name: "Double Demons" })).toHaveAttribute(
+                        "aria-selected",
+                        "false"
+                    );
+                    expect(screen.getByRole("option", { name: "Double Double" })).toHaveAttribute(
+                        "aria-selected",
+                        "false"
+                    );
                 });
             });
             expect(
@@ -354,18 +360,16 @@ describe("AutoSuggest Server variant", () => {
             expect(screen.getByRole("option", { name: "Double Demons" }).classList.contains("highlighted")).toBe(false);
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
-            expect(screen.getByTestId("Value")).toHaveTextContent("double");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("double");
         });
         test("It handles hitting the enter key with no option selected", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -390,18 +394,16 @@ describe("AutoSuggest Server variant", () => {
             expect(input).not.toHaveAttribute("aria-activedescendant");
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("double");
-            expect(screen.getByTestId("Value")).toHaveTextContent("double");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("double");
         });
         test("It handles hitting the enter key with an option selected", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -438,19 +440,17 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("Double Checking This Works");
-            expect(screen.getByTestId("Value")).toHaveTextContent("Double Checking This Works");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("Double Checking This Works");
             expect(input).not.toHaveAttribute("aria-activedescendant");
         });
         test("It handles other keypress events", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -466,18 +466,16 @@ describe("AutoSuggest Server variant", () => {
             expect(screen.getByText(/No results found/)).toBeInTheDocument();
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("a");
-            expect(screen.getByTestId("Value")).toHaveTextContent("a");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("a");
         });
         test("It handles hitting escape key", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -525,18 +523,16 @@ describe("AutoSuggest Server variant", () => {
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("");
             expect(input).not.toHaveAttribute("aria-activedescendant");
-            expect(screen.getByTestId("Value")).toHaveTextContent("");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("");
         });
         test("It handles selection of option", async () => {
-            await act(async () => {
-                render(
-                    <ServerWrapper
-                        url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                        name="Model"
-                        type="Server"
-                    />
-                );
-            });
+            render(
+                <ServerWrapper
+                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
+                    name="Model"
+                    type="Server"
+                />
+            );
             const input = screen.getByRole("textbox", { name: "Model" });
 
             await act(async () => {
@@ -567,33 +563,22 @@ describe("AutoSuggest Server variant", () => {
             });
             expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
             expect(input).toHaveValue("Double Demons");
-            expect(screen.getByTestId("Value")).toHaveTextContent("Double Demons");
+            expect(screen.getByTestId("Model-value")).toHaveTextContent("Double Demons");
         });
     });
     test("handles server success without data", async () => {
         server.use(
-            rest.get(
-                "https://ntsb-server.herokuapp.com/api/accidents/modelList/:model",
-                (req, res, ctx) => {
-                    return res(ctx.json([]));
-                }
-            )
+            rest.get("https://ntsb-server.herokuapp.com/api/accidents/modelList/:model", (req, res, ctx) => {
+                return res(ctx.json([]));
+            })
         );
-        await act(async () => {
-            render(
-                <ServerWrapper
-                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                    name="Model"
-                    type="Server"
-                />
-            );
-        });
+        render(
+            <ServerWrapper url="https://ntsb-server.herokuapp.com/api/accidents/modelList" name="Model" type="Server" />
+        );
         const input = screen.getByRole("textbox", { name: "Model" });
         await act(async () => {
             fireEvent.change(input, { target: { value: "double" } });
-            await waitFor(() =>
-                expect(screen.queryByText(/Loading/)).toBeInTheDocument()
-            );
+            await waitFor(() => expect(screen.queryByText(/Loading/)).toBeInTheDocument());
         });
         await act(async () => {
             await waitFor(() => {
@@ -602,26 +587,17 @@ describe("AutoSuggest Server variant", () => {
         });
         expect(screen.getByText(/No results found/)).toBeInTheDocument();
         expect(input).toHaveValue("double");
-        expect(screen.getByTestId("Value")).toHaveTextContent("double");
+        expect(screen.getByTestId("Model-value")).toHaveTextContent("double");
     });
     test("handles server error", async () => {
         server.use(
-            rest.get(
-                "https://ntsb-server.herokuapp.com/api/accidents/modelList/:model",
-                (req, res, ctx) => {
-                    return res(ctx.status(500));
-                }
-            )
+            rest.get("https://ntsb-server.herokuapp.com/api/accidents/modelList/:model", (req, res, ctx) => {
+                return res(ctx.status(500));
+            })
         );
-        await act(async () => {
-            render(
-                <ServerWrapper
-                    url="https://ntsb-server.herokuapp.com/api/accidents/modelList"
-                    name="Model"
-                    type="Server"
-                />
-            );
-        });
+        render(
+            <ServerWrapper url="https://ntsb-server.herokuapp.com/api/accidents/modelList" name="Model" type="Server" />
+        );
         const input = screen.getByRole("textbox", { name: "Model" });
         await act(async () => {
             fireEvent.change(input, { target: { value: "double" } });
