@@ -601,8 +601,7 @@ test("Input should not be disabled if disabled does not evaluate to true", () =>
     const input = screen.getByRole("textbox", { name: "Make" });
     expect(input).not.toHaveAttribute("disabled");
 });
-test("Input value should update if changed", async () => {
-
+test("Input value should update if changed -- server", async () => {
     const StateAndCountry = () => {
         const [country, setCountry] = React.useState();
         const [state, setState] = React.useState();
@@ -613,7 +612,7 @@ test("Input value should update if changed", async () => {
                 setDisabled(true);
                 setState("");
             }
-        }, [country])
+        }, [country]);
 
         return (
             <>
@@ -635,9 +634,7 @@ test("Input value should update if changed", async () => {
             </>
         );
     };
-    const { queryById } = render(
-            <StateAndCountry />
-        );
+    const { queryById } = render(<StateAndCountry />);
     const state = screen.getByRole("textbox", { name: "State" });
     await act(async () => {
         fireEvent.change(state, { target: { value: "AK" } });
@@ -649,7 +646,7 @@ test("Input value should update if changed", async () => {
         });
     });
     const stateAnnouncement = queryById("State-announcement");
-    expect(stateAnnouncement).toHaveTextContent("1 suggestions displayed. To navigate, use up and down arrow keys.")
+    expect(stateAnnouncement).toHaveTextContent("1 suggestions displayed. To navigate, use up and down arrow keys.");
     const stateOption = screen.getByRole("option", { name: "AK" });
     await act(async () => {
         fireEvent(
@@ -676,7 +673,7 @@ test("Input value should update if changed", async () => {
         });
     });
     const countryAnnouncement = queryById("Country-announcement");
-    expect(countryAnnouncement).toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.")
+    expect(countryAnnouncement).toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.");
     const countryOption = screen.getByRole("option", { name: "United Kingdom" });
     await act(async () => {
         fireEvent(
@@ -694,7 +691,80 @@ test("Input value should update if changed", async () => {
     expect(screen.getByTestId("Country-value")).toHaveTextContent("United Kingdom");
     expect(screen.getByRole("textbox", { name: "State" })).not.toHaveValue();
     expect(screen.getByTestId("State-value")).toHaveTextContent("");
-    screen.debug();
-    expect(stateAnnouncement).not.toHaveTextContent("1 suggestions displayed. To navigate, use up and down arrow keys.");
-    expect(countryAnnouncement).not.toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.");
+    expect(stateAnnouncement).not.toHaveTextContent(
+        "1 suggestions displayed. To navigate, use up and down arrow keys."
+    );
+    expect(countryAnnouncement).not.toHaveTextContent(
+        "3 suggestions displayed. To navigate, use up and down arrow keys."
+    );
+});
+test("Input value should update if changed -- client", async () => {
+    const StateAndCountryClient = () => {
+        const [country, setCountry] = React.useState();
+        const [state, setState] = React.useState();
+        const [disabled, setDisabled] = React.useState();
+
+        React.useEffect(() => {
+            if (country && country !== "United States") {
+                setDisabled(true);
+                setState("");
+            }
+        }, [country]);
+
+        return (
+            <>
+                <AutoSuggest name="Country" handleChange={setCountry} options={countries} value={country} />
+                <AutoSuggest name="State" handleChange={setState} options={states} disabled={disabled} value={state} />
+                <p data-testid="Country-value">{country}</p>
+                <p data-testid="State-value">{state}</p>
+            </>
+        );
+    };
+    const { queryById } = render(<StateAndCountryClient />);
+    const state = screen.getByRole("textbox", { name: "State" });
+    fireEvent.change(state, { target: { value: "AK" } });
+    const stateAnnouncement = queryById("State-announcement");
+    expect(stateAnnouncement).toHaveTextContent("1 suggestions displayed. To navigate, use up and down arrow keys.");
+    const stateOption = screen.getByRole("option", { name: "AK" });
+    await act(async () => {
+        fireEvent(
+            stateOption,
+            new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true
+            })
+        );
+        await waitFor(() => {
+            expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        });
+    });
+    expect(state).toHaveValue("AK");
+    expect(screen.getByTestId("State-value")).toHaveTextContent("AK");
+    const country = screen.getByRole("textbox", { name: "Country" });
+    fireEvent.change(country, { target: { value: "United" } });
+    const countryAnnouncement = queryById("Country-announcement");
+    expect(countryAnnouncement).toHaveTextContent("3 suggestions displayed. To navigate, use up and down arrow keys.");
+    const countryOption = screen.getByRole("option", { name: "United Kingdom" });
+    await act(async () => {
+        fireEvent(
+            countryOption,
+            new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true
+            })
+        );
+        await waitFor(() => {
+            expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        });
+    });
+    expect(country).toHaveValue("United Kingdom");
+    expect(screen.getByTestId("Country-value")).toHaveTextContent("United Kingdom");
+    expect(screen.getByRole("textbox", { name: "State" })).not.toHaveValue();
+    expect(screen.getByTestId("State-value")).toHaveTextContent("");
+    expect(stateAnnouncement).not.toHaveTextContent(
+        "1 suggestions displayed. To navigate, use up and down arrow keys."
+    );
+    expect(countryAnnouncement).not.toHaveTextContent(
+        "3 suggestions displayed. To navigate, use up and down arrow keys."
+    );
 });

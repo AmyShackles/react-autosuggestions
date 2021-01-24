@@ -19,6 +19,7 @@ const ExampleServer = () => {
                 name="Make"
                 url="https://ntsb-server.herokuapp.com/api/accidents/makeList"
                 handleChange={setMake}
+                value={make}
             />
             <button>Submit</button>
         </form>
@@ -45,6 +46,7 @@ const ExampleClient = () => {
                 "Chevrolet",
                 ]}
                 handleChange={setMake}
+                value={make}
             />
             <button>Submit</button>
         </form>
@@ -64,6 +66,8 @@ const ExampleClient = () => {
 | **debounceTime** | The amount of milliseconds to wait before sending requests to url based on input |
 | **styles** |  An object to customize the appearance of the AutoSuggest component |
 | **options** | The array of options if the autosuggest is created using a list of items already in the application |
+| **handleChange** | Array for updating the text in the autosuggest field |
+| **value** | The value of the autosuggest field |
 
 
 ## AutoSuggest Default Props
@@ -97,7 +101,7 @@ Using our earlier example
 
 ```jsx
     <form onSubmit={handleSubmit}>
-        <AutoSuggest name="Make" url="https://ntsb-server.herokuapp.com/api/accidents/makeList" />
+        <AutoSuggest name="Make" url="https://ntsb-server.herokuapp.com/api/accidents/makeList" handleChange={setMake} value={make}/>
         <button>Submit</button>
     </form>
 ```
