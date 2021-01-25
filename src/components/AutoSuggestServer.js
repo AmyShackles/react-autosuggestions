@@ -10,7 +10,7 @@ export const AutoSuggestServer = React.forwardRef(
         const [options, setOptions] = React.useState([]);
         const [errored, setErrored] = React.useState(false);
         const [noResult, setNoResult] = React.useState(false);
-        const debouncedSearchText = useDebounce(value, debounceTime);
+        const debouncedSearchText = useDebounce(value, debounceTime, isOpen);
         const [loading, setLoading] = React.useState(false);
         const [activeDescendant, setActiveDescendant] = React.useState();
 
