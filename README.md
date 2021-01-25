@@ -54,7 +54,6 @@ const ExampleClient = () => {
 
 }
 
-
 ```
 
 ## AutoSuggest props:
@@ -68,6 +67,7 @@ const ExampleClient = () => {
 | **options** | The array of options if the autosuggest is created using a list of items already in the application |
 | **handleChange** | Array for updating the text in the autosuggest field |
 | **value** | The value of the autosuggest field |
+| **caseInsensitive** | Setting for Client version of AutoSuggest, whether to perform case-insensitive matches against the options array |
 
 
 ## AutoSuggest Default Props
@@ -78,7 +78,12 @@ const ExampleClient = () => {
 | **url** | string | "" |
 | **debounceTime** | number | 200 |
 | **styles** | object | <pre> {<br>    announcement: {<br>      position: "absolute",<br>      clip: "rect(0 0 0 0)",<br>      clipPath: "inset(50%)",<br>      height: "1px",<br>      width: "1px",<br>      overflow: "hidden",<br>    },<br>    combobox: {<br>      display: "inline-block",<br>    },<br>    searchField: {<br>      padding: ".5rem",<br>      border: "2px solid #c8c8c8",<br>      backgroundColor: "#fff",<br>      borderRadius: "6px",<br>      color: "#000",<br>      fontWeight: "normal",<br>      fontSize: "1.35rem",<br>      margin: "0 auto",<br>      width: "19rem",<br>      focus: {<br>        color: "#000",<br>        border: "2px solid #005499",<br>        outline: "none",<br>      },<br>    },<br>    searchLabel: {<br>      display: "block",<br>      fontSize: "1.35rem",<br>    },<br>    suggestionsContainer: {<br>      display: "block",<br>      position: "absolute",<br>      border: "1px solid #999",<br>      background: "#fff",<br>      width: "20rem",<br>    },<br>    suggestionOptions: {<br>      margin: "0",<br>      padding: "0",<br>      listStyle: "none",<br>    },<br>    suggestionOption: {<br>      margin: "0",<br>      padding: ".5rem",<br>      fontSize: "1.35rem",<br>      whiteSpace: "nowrap",<br>      overflow: "hidden",<br>      cursor: "default",<br>    },<br>  } </pre> |
-| options | array | [] |
+| **options** | array | [] |
+| **handleChange** | function | No default.  Required prop |
+| **value** | string | No default.  Required prop |
+| **caseInsensitive** | boolean | true |
+
+<hr>
 
 ## Options argument
 

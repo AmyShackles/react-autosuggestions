@@ -24,7 +24,17 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-const Form = ({ name = "", url = "", options = [], type = "", styles, handleChange, disabled, value }) => {
+const Form = ({
+    name = "",
+    url = "",
+    options = [],
+    type = "",
+    styles,
+    handleChange,
+    disabled,
+    value,
+    caseInsensitive
+}) => {
     const [make, setMake] = React.useState();
     const [formData, setFormData] = React.useState();
     const handleSubmit = (e) => {
@@ -43,6 +53,7 @@ const Form = ({ name = "", url = "", options = [], type = "", styles, handleChan
                     options={options}
                     styles={styles}
                     disabled={disabled ? true : false}
+                    caseInsensitive={caseInsensitive}
                 />
                 <button>Submit</button>
             </form>
@@ -767,4 +778,85 @@ test("Input value should update if changed -- client", async () => {
     expect(countryAnnouncement).not.toHaveTextContent(
         "3 suggestions displayed. To navigate, use up and down arrow keys."
     );
+});
+describe("Client version should perform case-insensitive matche if caseInsensitive is true", async () => {
+    test("when options are strings", () => {
+        const options = ["abba", "ABB", "aBbott", "Abberette"];
+        render(<Form options={options} name="Name" caseInsensitive={true} />);
+        const input = screen.getByRole("textbox", { name: "Name" });
+        fireEvent.change(input, { target: { value: "Abb" } });
+        expect(screen.getByRole("option", { name: "abba" }));
+        expect(screen.getByRole("option", { name: "ABB" }));
+        expect(screen.getByRole("option", { name: "aBbott" }));
+        expect(screen.getByRole("option", { name: "Abberette" }));
+    });
+    test("when options are objects", () => {
+        const options = [
+            { name: "abba", value: "abba" },
+            { name: "ABB", value: "ABB" },
+            { name: "aBbott", value: "aBbott" },
+            { name: "Abberette", value: "Abberette" }
+        ];
+        render(<Form options={options} name="Name" caseInsensitive={true} />);
+        const input = screen.getByRole("textbox", { name: "Name" });
+        fireEvent.change(input, { target: { value: "Abb" } });
+        expect(screen.getByRole("option", { name: "abba" }));
+        expect(screen.getByRole("option", { name: "ABB" }));
+        expect(screen.getByRole("option", { name: "aBbott" }));
+        expect(screen.getByRole("option", { name: "Abberette" }));
+    });
+});
+describe("Client version should perform case-insensitive match by default", async () => {
+    test("when options are strings", () => {
+        const options = ["abba", "ABB", "aBbott", "Abberette"];
+        render(<Form options={options} name="Name" />);
+        const input = screen.getByRole("textbox", { name: "Name" });
+        fireEvent.change(input, { target: { value: "Abb" } });
+        expect(screen.getByRole("option", { name: "abba" }));
+        expect(screen.getByRole("option", { name: "ABB" }));
+        expect(screen.getByRole("option", { name: "aBbott" }));
+        expect(screen.getByRole("option", { name: "Abberette" }));
+    });
+    test("when options are objects", () => {
+        const options = [
+            { name: "abba", value: "abba" },
+            { name: "ABB", value: "ABB" },
+            { name: "aBbott", value: "aBbott" },
+            { name: "Abberette", value: "Abberette" }
+        ];
+        render(<Form options={options} name="Name" />);
+        const input = screen.getByRole("textbox", { name: "Name" });
+        fireEvent.change(input, { target: { value: "Abb" } });
+        expect(screen.getByRole("option", { name: "abba" }));
+        expect(screen.getByRole("option", { name: "ABB" }));
+        expect(screen.getByRole("option", { name: "aBbott" }));
+        expect(screen.getByRole("option", { name: "Abberette" }));
+    });
+});
+describe("Client version should not perform case-insensitive matches if caseInsensitive is false", async () => {
+    test("when options are strings", () => {
+        const options = ["abba", "ABB", "aBbott", "Abberette"];
+        render(<Form options={options} name="Name" caseInsensitive={false} />);
+        const input = screen.getByRole("textbox", { name: "Name" });
+        fireEvent.change(input, { target: { value: "a" } });
+        expect(screen.getByRole("option", { name: "abba" }));
+        expect(screen.getByRole("option", { name: "aBbott" }));
+        expect(screen.queryByRole("option", { name: "ABB" })).toBeNull();
+        expect(screen.queryByRole("option", { name: "Abberette" })).toBeNull();
+    });
+    test("when options are objects", () => {
+        const options = [
+            { name: "abba", value: "abba" },
+            { name: "ABB", value: "ABB" },
+            { name: "aBbott", value: "aBbott" },
+            { name: "Abberette", value: "Abberette" }
+        ];
+        render(<Form options={options} name="Name" caseInsensitive={false} />);
+        const input = screen.getByRole("textbox", { name: "Name" });
+        fireEvent.change(input, { target: { value: "a" } });
+        expect(screen.getByRole("option", { name: "abba" }));
+        expect(screen.getByRole("option", { name: "aBbott" }));
+        expect(screen.queryByRole("option", { name: "ABB" })).toBeNull();
+        expect(screen.queryByRole("option", { name: "Abberette" })).toBeNull();
+    });
 });
