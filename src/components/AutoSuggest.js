@@ -13,7 +13,8 @@ export const AutoSuggest = ({
     options = [],
     handleChange,
     disabled = false,
-    value
+    value,
+    caseInsensitive = true
 }) => {
     const combinedStyles = {
         announcement: {
@@ -97,6 +98,7 @@ export const AutoSuggest = ({
             handleChange={handleChange}
             disabled={disabled}
             value={value}
+            caseInsensitive={caseInsensitive}
         />
     );
 };
