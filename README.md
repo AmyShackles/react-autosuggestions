@@ -115,7 +115,7 @@ If the user entered "brau" into the input field, the resulting html would look l
 
 ```html
 <form>
-    <div id="Make-announcement" class="visually-hidden" aria-live="assertive" style="position: absolute; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; width: 1px; overflow: hidden;">4 suggestions displayed.  To navigate, use up and down arrow keys.
+    <div id="Make-announcement" class="visually-hidden" aria-live="polite" style="position: absolute; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; width: 1px; overflow: hidden;">4 suggestions displayed.  To navigate, use up and down arrow keys.
     </div>
     <div>
         <div id="Make-searchField" role="combobox" aria-expanded="true" aria-owns="Make-input" aria-haspopup="listbox" aria-controls="Make-autosuggest-options" style="display: inline-block;">

@@ -138,7 +138,7 @@ export const AutoSuggestContainer = React.forwardRef(
                 <div
                     id={`${name}-announcement`}
                     className="visually-hidden"
-                    aria-live="assertive"
+                    aria-live="polite"
                     data-type={dataType}
                     style={styles.announcement && styles.announcement}
                 >
