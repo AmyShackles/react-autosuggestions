@@ -14,7 +14,7 @@ export const AutoSuggestClient = React.forwardRef(
 
         React.useEffect(() => {
             if (isOpen && value) {
-                let res;
+                let res = [];
                 if (optionType === "string") {
                     if (caseInsensitive) {
                         res = options.filter((opt) => opt.toUpperCase().startsWith(value.toUpperCase()));

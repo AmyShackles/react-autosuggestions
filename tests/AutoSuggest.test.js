@@ -176,6 +176,17 @@ describe("AutoSuggest should display matching options when text is entered", () 
         expect(screen.getByRole("option", { name: "Buick" })).toHaveAttribute("name", "Buick");
 
     });
+    test("Autosuggest should handle an empty options array", () => {
+        render(
+            <Form
+                name="Empty"
+                options={[]}
+            />
+        );
+        const input = screen.queryByRole("textbox");
+        fireEvent.change(input, { target: { value: "B" } });
+        expect(screen.queryByRole("listbox")).toBeNull();
+    });
 });
 
 /* It was easier to do some of these tests in a higher order element 
