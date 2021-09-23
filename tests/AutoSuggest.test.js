@@ -790,7 +790,7 @@ test("Input value should update if changed -- client", async () => {
         "3 suggestions displayed. To navigate, use up and down arrow keys."
     );
 });
-describe("Client version should perform case-insensitive matche if caseInsensitive is true", async () => {
+describe("Client version should perform case-insensitive matche if caseInsensitive is true", () => {
     test("when options are strings", () => {
         const options = ["abba", "ABB", "aBbott", "Abberette"];
         render(<Form options={options} name="Name" caseInsensitive={true} />);
@@ -817,7 +817,7 @@ describe("Client version should perform case-insensitive matche if caseInsensiti
         expect(screen.getByRole("option", { name: "Abberette" }));
     });
 });
-describe("Client version should perform case-insensitive match by default", async () => {
+describe("Client version should perform case-insensitive match by default", () => {
     test("when options are strings", () => {
         const options = ["abba", "ABB", "aBbott", "Abberette"];
         render(<Form options={options} name="Name" />);
@@ -844,7 +844,7 @@ describe("Client version should perform case-insensitive match by default", asyn
         expect(screen.getByRole("option", { name: "Abberette" }));
     });
 });
-describe("Client version should not perform case-insensitive matches if caseInsensitive is false", async () => {
+describe("Client version should not perform case-insensitive matches if caseInsensitive is false", () => {
     test("when options are strings", () => {
         const options = ["abba", "ABB", "aBbott", "Abberette"];
         render(<Form options={options} name="Name" caseInsensitive={false} />);
