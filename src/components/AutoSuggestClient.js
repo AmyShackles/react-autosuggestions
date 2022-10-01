@@ -4,7 +4,7 @@ import { alphanumericSort } from "../utils/alphanumericSort.js";
 
 export const AutoSuggestClient = React.forwardRef(
     (
-        { name, options, styles, type, isOpen, setIsOpen, handleChange, disabled, value, caseInsensitive },
+        {  caseInsensitive, disabled, handleChange, id, isOpen, name, options, setIsOpen, styles, type, value, },
         ref
     ) => {
         const [sortedOptions, optionType] = alphanumericSort(options);
@@ -53,22 +53,23 @@ export const AutoSuggestClient = React.forwardRef(
 
         return (
             <AutoSuggestContainer
-                ref={ref}
-                name={name}
-                options={results}
-                openListbox={isOpen}
-                searchText={value}
-                setOpenListbox={setIsOpen}
-                setSearchText={handleInputChange}
-                styles={styles}
-                dataType={type}
-                noResult={noResult}
                 activeDescendant={activeDescendant}
-                setActiveDescendant={setActiveDescendant}
                 clearText={() => {
                     handleChange();
                 }}
+                dataType={type}
                 disabled={disabled}
+                id={id}
+                name={name}
+                noResult={noResult}
+                openListbox={isOpen}
+                options={results}
+                ref={ref}
+                searchText={value}
+                setActiveDescendant={setActiveDescendant}
+                setOpenListbox={setIsOpen}
+                setSearchText={handleInputChange}
+                styles={styles}
             />
         );
     }

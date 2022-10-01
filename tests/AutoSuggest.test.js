@@ -25,15 +25,16 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 const Form = ({
-    name = "",
-    url = "",
-    options = [],
-    type = "",
-    styles,
-    handleChange,
+    caseInsensitive,
     disabled,
+    handleChange,
+    id = "",
+    name = "",
+    options = [],
+    styles,
+    type = "",
+    url = "",
     value,
-    caseInsensitive
 }) => {
     const [make, setMake] = React.useState();
     const [formData, setFormData] = React.useState();
@@ -45,15 +46,16 @@ const Form = ({
         <>
             <form onSubmit={handleSubmit}>
                 <AutoSuggest
-                    name={name}
+                    caseInsensitive={caseInsensitive}
+                    disabled={disabled ? true : false}
                     handleChange={handleChange ? handleChange : setMake}
-                    value={value ? value : make}
-                    type={type}
-                    url={url}
+                    id={id}
+                    name={name}
                     options={options}
                     styles={styles}
-                    disabled={disabled ? true : false}
-                    caseInsensitive={caseInsensitive}
+                    type={type}
+                    url={url}
+                    value={value ? value : make}
                 />
                 <button>Submit</button>
             </form>
@@ -96,6 +98,12 @@ describe("AutoSuggest rendering", () => {
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     })
 });
+
+test("AutoSuggest should use user defined id if provided", () => {
+    render(<Form id="testId" name="Make" options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]} />);
+    const input = screen.getByLabelText("Make");
+    expect(input.id).toBe("testId-input")
+})
 
 test("AutoSuggest should accept input", () => {
     render(<Form name="Make" options={["Acura", "BMW", "Audi", "Bentley", "Buick", "Cadillac", "Chevrolet"]} />);
@@ -307,7 +315,7 @@ describe("Down arrow", () => {
         userEvent.type(input, "{arrowdown}");
         userEvent.type(input, "{arrowdown}");
         userEvent.type(input, "{arrowdown}");
-        expect(input).toHaveAttribute("aria-activedescendant", "Make-suggestion2");
+        expect(input).toHaveAttribute("aria-activedescendant", "Make-suggestion-2");
     });
     test("Pressing down arrow should set aria-selected true for the selected option", () => {
         render(
@@ -354,7 +362,7 @@ describe("Up arrow", () => {
         userEvent.type(input, "{arrowup}");
         userEvent.type(input, "{arrowup}");
         userEvent.type(input, "{arrowup}");
-        expect(input).toHaveAttribute("aria-activedescendant", "Make-suggestion0");
+        expect(input).toHaveAttribute("aria-activedescendant", "Make-suggestion-0");
     });
     test("Pressing down arrow should set aria-selected true for the selected option", () => {
         render(

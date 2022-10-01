@@ -5,16 +5,17 @@ import "../index.css";
 import { defaultOptions } from "../utils/defaultOptions.js";
 
 export const AutoSuggest = ({
+    caseInsensitive = true,
+    debounceTime = 200,
+    disabled = false,
+    handleChange,
+    id,
+    name = "Search",
+    options = [],
+    styles = defaultOptions,
     type = "",
     url = "",
-    name = "Search",
-    debounceTime = 200,
-    styles = defaultOptions,
-    options = [],
-    handleChange,
-    disabled = false,
     value,
-    caseInsensitive = true
 }) => {
     const combinedStyles = {
         announcement: {
@@ -72,33 +73,35 @@ export const AutoSuggest = ({
     if (type === "server" || url) {
         return (
             <AutoSuggestServer
-                ref={ref}
-                name={name}
-                url={url}
-                type="Server"
-                debounceTime={debounceTime}
-                styles={combinedStyles}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                handleChange={handleChange}
-                disabled={disabled}
-                value={value}
+            debounceTime={debounceTime}
+            disabled={disabled}
+            handleChange={handleChange}
+            id={id}
+            isOpen={isOpen}
+            name={name}
+            setIsOpen={setIsOpen}
+            styles={combinedStyles}
+            type="Server"
+            ref={ref}
+            url={url}
+            value={value}
             />
         );
     }
     return (
         <AutoSuggestClient
-            ref={ref}
-            name={name}
-            type="Client"
-            options={options}
-            styles={combinedStyles}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            handleChange={handleChange}
-            disabled={disabled}
-            value={value}
             caseInsensitive={caseInsensitive}
+            disabled={disabled}
+            handleChange={handleChange}
+            id={id}
+            isOpen={isOpen}
+            name={name}
+            options={options}
+            ref={ref}
+            setIsOpen={setIsOpen}
+            type="Client"
+            styles={combinedStyles}
+            value={value}
         />
     );
 };
