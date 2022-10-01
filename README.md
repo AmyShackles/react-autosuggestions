@@ -59,20 +59,22 @@ const ExampleClient = () => {
 ## AutoSuggest props:
 | propName | Description |
 | --- | --- |
-| **type** | Passing "server" will tell the component to render an AutoSuggestServer component.  If a type is not passed and a url argument is passed, the component infers the type to be server.  If no type is passed (or a type other than "server" is passed), AutoSuggestClient component is rendered. |
-| **name** | name used for the autosuggest input label and the ids of nested elements |
+| **id** | value used to generate ids of nested elements |
+| **type** | passing "server" will tell the component to render an AutoSuggestServer component.  If a type is not passed and a url argument is passed, the component infers the type to be server.  If no type is passed (or a type other than "server" is passed), AutoSuggestClient component is rendered. |
+| **name** | name used for the autosuggest input label.  If `id` prop is not provided, the `name` prop is used for generating the ids of nested elements |
 | **url** | endpoint to query to generate the suggestions list.  Component expects the url to accept input text as a parameter, not query.<br><br>Example:<br>With "https://ntsb-server.herokuapp.com/api/accidents/makeList" as the url,<br>if a user typed 'Bo' into the input field, a request would be sent to<br>https://ntsb-server.herokuapp.com/api/accidents/makeList/Bo) |
-| **debounceTime** | The amount of milliseconds to wait before sending requests to url based on input |
-| **styles** |  An object to customize the appearance of the AutoSuggest component |
+| **debounceTime** | the amount of milliseconds to wait before sending requests to url based on input |
+| **styles** |  an object to customize the appearance of the AutoSuggest component |
 | **options** | The array of options if the autosuggest is created using a list of items already in the application |
-| **handleChange** | Array for updating the text in the autosuggest field |
-| **value** | The value of the autosuggest field |
-| **caseInsensitive** | Setting for Client version of AutoSuggest, whether to perform case-insensitive matches against the options array |
+| **handleChange** | array for updating the text in the autosuggest field |
+| **value** | the value of the autosuggest field |
+| **caseInsensitive** | setting for Client version of AutoSuggest, whether to perform case-insensitive matches against the options array |
 
 
 ## AutoSuggest Default Props
 | propName | type | defaultValue |
 | --- | --- | --- |
+| **id** | string | "" |
 | **type** | string | "" |
 | **name** | string | "Search" |
 | **url** | string | "" |
@@ -106,7 +108,7 @@ Using our earlier example
 
 ```jsx
     <form onSubmit={handleSubmit}>
-        <AutoSuggest name="Make" url="https://ntsb-server.herokuapp.com/api/accidents/makeList" handleChange={setMake} value={make}/>
+        <AutoSuggest id="desktop-make" name="Make" url="https://ntsb-server.herokuapp.com/api/accidents/makeList" handleChange={setMake} value={make}/>
         <button>Submit</button>
     </form>
 ```
@@ -115,23 +117,23 @@ If the user entered "brau" into the input field, the resulting html would look l
 
 ```html
 <form>
-    <div id="Make-announcement" class="visually-hidden" aria-live="polite" style="position: absolute; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; width: 1px; overflow: hidden;">4 suggestions displayed.  To navigate, use up and down arrow keys.
+    <div id="desktop-make-announcement" class="visually-hidden" aria-live="polite" style="position: absolute; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; width: 1px; overflow: hidden;">4 suggestions displayed.  To navigate, use up and down arrow keys.
     </div>
     <div>
-        <div id="Make-searchField" role="combobox" aria-expanded="true" aria-owns="Make-input" aria-haspopup="listbox" aria-controls="Make-autosuggest-options" style="display: inline-block;">
-            <label for="Make-input" style="display: block; font-size: 1.35rem;">Make
+        <div id="desktop-make-searchField" role="combobox" aria-expanded="true" aria-owns="desktop-make-input" aria-haspopup="listbox" aria-controls="desktop-make-autosuggest-options" style="display: inline-block;">
+            <label for="desktop-make-input" style="display: block; font-size: 1.35rem;">Make
             </label>
-            <input id="Make-input" type="text" class="searchfield" autocomplete="off" aria-autocomplete="both" value="brau" style="padding: 0.5rem; border: 2px solid rgb(200, 200, 200); background-color: rgb(255, 255, 255); border-radius: 6px; color: rgb(0, 0, 0); font-weight: normal; font-size: 1.35rem; margin: 0px auto; width: 19rem; outline: none;">
+            <input id="desktop-make-input" type="text" class="searchfield" autocomplete="off" aria-autocomplete="both" value="brau" style="padding: 0.5rem; border: 2px solid rgb(200, 200, 200); background-color: rgb(255, 255, 255); border-radius: 6px; color: rgb(0, 0, 0); font-weight: normal; font-size: 1.35rem; margin: 0px auto; width: 19rem; outline: none;">
         </div>
-        <div class="autocompleteSuggestions" id="Make-autocomplete" style="display: block; position: absolute; border: 1px solid rgb(153, 153, 153); background: rgb(255, 255, 255); width: 20rem;">
-            <ul id="Make-autosuggest-options" role="listbox" style="margin: 0px; padding: 0px; list-style: none;">
-                <li role="option" id="Make-suggestion0" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">BRAUCH
+        <div class="autocompleteSuggestions" id="desktop-make-autocomplete" style="display: block; position: absolute; border: 1px solid rgb(153, 153, 153); background: rgb(255, 255, 255); width: 20rem;">
+            <ul id="desktop-make-autosuggest-options" role="listbox" style="margin: 0px; padding: 0px; list-style: none;">
+                <li role="option" id="desktop-make-suggestion-0" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">BRAUCH
                 </li>
-                <li role="option" id="Make-suggestion1" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">BRAULT GLASAIR
+                <li role="option" id="desktop-make-suggestion-1" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">BRAULT GLASAIR
                 </li>
-                <li role="option" id="Make-suggestion2" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">Brault
+                <li role="option" id="desktop-make-suggestion-2" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">Brault
                 </li>
-                <li role="option" id="Make-suggestion3" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">Braunschmidt
+                <li role="option" id="desktop-make-suggestion-3" aria-selected="false" class="auto-suggestions" style="margin: 0px; padding: 0.5rem; font-size: 1.35rem; white-space: nowrap; overflow: hidden; cursor: default;">Braunschmidt
                 </li>
             </ul>
         </div>

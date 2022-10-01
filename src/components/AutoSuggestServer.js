@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 
 
 export const AutoSuggestServer = React.forwardRef(
-    ({ url = "", name, debounceTime = 200, styles, type, isOpen, setIsOpen, handleChange, disabled, value }, ref) => {
+    ({ debounceTime = 200, disabled, handleChange, id, isOpen, name, setIsOpen, styles, type,  url = "", value }, ref) => {
         const [options, setOptions] = React.useState([]);
         const [errored, setErrored] = React.useState(false);
         const [noResult, setNoResult] = React.useState(false);
@@ -53,26 +53,27 @@ export const AutoSuggestServer = React.forwardRef(
         } else {
             return (
                 <AutoSuggestContainer
-                    dataType={type}
-                    ref={ref}
-                    name={name}
-                    options={options}
-                    error={errored}
-                    setSearchText={handleInputChange}
-                    searchText={value}
-                    openListbox={isOpen}
-                    setOpenListbox={setIsOpen}
-                    noResult={noResult}
-                    styles={styles}
-                    loading={loading}
-                    setLoading={setLoading}
                     activeDescendant={activeDescendant}
-                    setActiveDescendant={setActiveDescendant}
                     clearText={() => {
                         handleChange();
                     }}
+                    dataType={type}
                     disabled={disabled}
-                />
+                    error={errored}
+                    id={id}
+                    loading={loading}
+                    name={name}
+                    noResult={noResult}
+                    openListbox={isOpen}
+                    options={options}
+                    ref={ref}
+                    searchText={value}
+                    setActiveDescendant={setActiveDescendant}
+                    setLoading={setLoading}
+                    setOpenListbox={setIsOpen}
+                    setSearchText={handleInputChange}
+                    styles={styles}
+                    />
             );
         }
     }

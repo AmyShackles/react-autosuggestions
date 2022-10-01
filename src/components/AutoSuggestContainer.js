@@ -4,22 +4,23 @@ import { AutoSuggestOptions } from "./AutoSuggestOptions.js";
 export const AutoSuggestContainer = React.forwardRef(
     (
         {
-            name,
-            options,
-            error = false,
-            setSearchText,
-            searchText = "",
-            openListbox,
-            setOpenListbox,
-            clearText,
-            noResult = false,
-            styles,
-            loading = false,
-            setLoading = () => {},
-            dataType,
             activeDescendant,
+            clearText,
+            dataType,
+            disabled,
+            error = false,
+            id,
+            loading = false,
+            name,
+            noResult = false,
+            openListbox,
+            options,
+            searchText = "",
             setActiveDescendant,
-            disabled
+            setLoading = () => {},
+            setOpenListbox,
+            setSearchText,
+            styles
         },
         inputRef
     ) => {
@@ -133,10 +134,12 @@ export const AutoSuggestContainer = React.forwardRef(
             let text = highlighted.getAttribute("textvalue");
             setSearchText(text);
         };
+
+        const idOrName = id || name;
         return (
             <>
                 <div
-                    id={`${name}-announcement`}
+                    id={`${idOrName}-announcement`}
                     className="visually-hidden"
                     aria-live="polite"
                     data-type={dataType}
@@ -148,19 +151,19 @@ export const AutoSuggestContainer = React.forwardRef(
                 </div>
                 <div>
                     <div
-                        id={`${name}-searchField`}
+                        id={`${idOrName}-searchField`}
                         role="combobox"
                         aria-expanded={openListbox ? "true" : "false"}
-                        aria-owns={`${name}-input`}
+                        aria-owns={`${idOrName}-input`}
                         aria-haspopup="listbox"
-                        aria-controls={`${name}-autosuggest-options`}
+                        aria-controls={`${idOrName}-autosuggest-options`}
                         style={styles.combobox && styles.combobox}
                     >
-                        <label id={`${name}-label`} style={styles.searchLabel && styles.searchLabel}>
+                        <label id={`${idOrName}-label`} style={styles.searchLabel && styles.searchLabel}>
                             {label}
                         </label>
                         <input
-                            id={`${name}-input`}
+                            id={`${idOrName}-input`}
                             type="text"
                             className={loading ? `loading searchfield` : "searchfield"}
                             autoComplete="off"
@@ -169,7 +172,7 @@ export const AutoSuggestContainer = React.forwardRef(
                             onChange={doSearch}
                             onKeyDown={doKeyPress}
                             value={searchText}
-                            aria-labelledby={`${name}-label`}
+                            aria-labelledby={`${idOrName}-label`}
                             style={styles.searchField && styles.searchField}
                             aria-activedescendant={activeDescendant}
                             disabled={disabled ? true : false}
@@ -178,25 +181,25 @@ export const AutoSuggestContainer = React.forwardRef(
                     {loading && <p style={styles.announcement && styles.announcement}>Loading {label} options</p>}
                     <div
                         className="autocompleteSuggestions"
-                        id={`${name}-autocomplete`}
+                        id={`${idOrName}-autocomplete`}
                         style={
                             styles.suggestionsContainer
                                 ? {
-                                      ...styles.suggestionsContainer,
-                                      display: openListbox ? "block" : "none"
-                                  }
+                                    ...styles.suggestionsContainer,
+                                    display: openListbox ? "block" : "none"
+                                }
                                 : { display: openListbox ? "block" : "none" }
                         }
                     >
                         {openListbox && options.length > 0 && (
                             <AutoSuggestOptions
-                                ref={suggestionRef}
-                                id={`${name}-autosuggest-options`}
-                                options={options}
-                                onClick={(e) => copyTextRemoveSuggestions(e)}
-                                styles={styles}
+                                id={idOrName}
                                 name={name}
+                                onClick={(e) => copyTextRemoveSuggestions(e)}
+                                options={options}
+                                ref={suggestionRef}
                                 selected={activeDescendant}
+                                styles={styles}
                             />
                         )}
                     </div>

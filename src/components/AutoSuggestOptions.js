@@ -5,23 +5,23 @@ export const AutoSuggestOptions = React.forwardRef(({ id, onClick, options, styl
     if (options[0].value && options[0].name && options[0].abbr) {
         return (
             <ul
-                id={id}
-                role="listbox"
+                aria-labelledby={`${id}-label`}
+                id={`${id}--autosuggest-options`}
                 ref={ref}
-                aria-labelledby={`${name}-label`}
+                role="listbox"
                 style={styles.suggestionOptions && styles.suggestionOptions}
             >
                 {options &&
                     options.map(({ name, value, abbr }, index) => (
                         <AutoSuggestOption
-                            key={index}
-                            id={`${name}-suggestion${index}`}
-                            selected={selected}
-                            onClick={onClick}
-                            value={value}
-                            name={name}
                             abbr={abbr}
+                            id={`${id}-suggestion-${index}`}
+                            key={index}
+                            name={name}
+                            onClick={onClick}
+                            selected={selected}
                             styles={styles}
+                            value={value}
                         />
                     ))}
             </ul>
@@ -29,22 +29,22 @@ export const AutoSuggestOptions = React.forwardRef(({ id, onClick, options, styl
     } else if (options[0].value && options[0].name) {
         return (
             <ul
-                id={id}
-                role="listbox"
+                aria-labelledby={`${id}-label`}
+                id={`${id}--autosuggest-options`}
                 ref={ref}
-                aria-labelledby={`${name}-label`}
+                role="listbox"
                 style={styles.suggestionOptions && styles.suggestionOptions}
             >
                 {options &&
                     options.map(({ name, value }, index) => (
                         <AutoSuggestOption
+                            id={`${id}-suggestion-${index}`}
                             key={index}
-                            id={`${name}-suggestion${index}`}
-                            selected={selected}
-                            onClick={onClick}
-                            value={value}
                             name={name}
+                            onClick={onClick}
+                            selected={selected}
                             styles={styles}
+                            value={value}
                         />
                     ))}
             </ul>
@@ -52,23 +52,23 @@ export const AutoSuggestOptions = React.forwardRef(({ id, onClick, options, styl
     }
     return (
         <ul
-        id={id}
-        role="listbox"
-        ref={ref}
-        aria-labelledby={`${name}-label`}
-        style={styles.suggestionOptions && styles.suggestionOptions}
-    >
-        {options &&
-            options.map((opt, index) => (
-                <AutoSuggestOption
-                    key={index}
-                    id={`${name}-suggestion${index}`}
-                    selected={selected}
-                    onClick={onClick}
-                    value={opt}
-                    styles={styles}
-                />
-            ))}
-    </ul>
+            aria-labelledby={`${id}-label`}
+            id={`${id}--autosuggest-options`}
+            ref={ref}
+            role="listbox"
+            style={styles.suggestionOptions && styles.suggestionOptions}
+        >
+            {options &&
+                options.map((opt, index) => (
+                    <AutoSuggestOption
+                        id={`${id}-suggestion-${index}`}
+                        key={index}
+                        onClick={onClick}
+                        selected={selected}
+                        styles={styles}
+                        value={opt}
+                    />
+                ))}
+        </ul>
     );
 });
