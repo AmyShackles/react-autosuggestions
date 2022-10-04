@@ -173,7 +173,10 @@ export const AutoSuggestContainer = React.forwardRef(
                             onKeyDown={doKeyPress}
                             value={searchText}
                             aria-labelledby={`${idOrName}-label`}
-                            style={styles.searchField && styles.searchField}
+                            style={{
+                                ...styles.searchField,
+                                ...(loading && {...styles.loadingStyles})
+                            }}
                             aria-activedescendant={activeDescendant}
                             disabled={disabled ? true : false}
                         />
