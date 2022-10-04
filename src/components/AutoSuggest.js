@@ -14,7 +14,7 @@ export const AutoSuggest = ({
     styles = defaultOptions,
     type = "",
     url = "",
-    value,
+    value
 }) => {
     const combinedStyles = {
         announcement: {
@@ -24,6 +24,14 @@ export const AutoSuggest = ({
         combobox: {
             ...defaultOptions.combobox,
             ...styles.combobox
+        },
+        hoveredSuggestionOption: {
+            ...defaultOptions.hoveredSuggestionOption,
+            ...styles.hoveredSuggestionOption
+        },
+        loadingStyles: {
+            ...defaultOptions.loadingStyles,
+            ...styles.loadingStyles
         },
         searchField: {
             ...defaultOptions.searchField,
@@ -36,6 +44,10 @@ export const AutoSuggest = ({
         searchLabel: {
             ...defaultOptions.searchLabel,
             ...styles.searchLabel
+        },
+        selectedSuggestionOption: {
+            ...defaultOptions.selectedSuggestionOption,
+            ...styles.selectedSuggestionOption
         },
         suggestionsContainer: {
             ...defaultOptions.suggestionsContainer,
@@ -72,18 +84,18 @@ export const AutoSuggest = ({
     if (type === "server" || url) {
         return (
             <AutoSuggestServer
-            debounceTime={debounceTime}
-            disabled={disabled}
-            handleChange={handleChange}
-            id={id}
-            isOpen={isOpen}
-            name={name}
-            setIsOpen={setIsOpen}
-            styles={combinedStyles}
-            type="Server"
-            ref={ref}
-            url={url}
-            value={value}
+                debounceTime={debounceTime}
+                disabled={disabled}
+                handleChange={handleChange}
+                id={id}
+                isOpen={isOpen}
+                name={name}
+                setIsOpen={setIsOpen}
+                styles={combinedStyles}
+                type="Server"
+                ref={ref}
+                url={url}
+                value={value}
             />
         );
     }

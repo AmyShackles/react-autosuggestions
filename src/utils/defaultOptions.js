@@ -10,6 +10,15 @@ export const defaultOptions = {
     combobox: {
         display: "inline-block"
     },
+    hoveredSuggestionOption: {
+        background: "#110D3B",
+        color: "#FFF"
+    },
+    loadingStyles: {
+        backgroundImage: "url(https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif)",
+        backgroundPosition: "right center",
+        backgroundRepeat: "no-repeat",
+    },
     searchField: {
         padding: ".5rem",
         border: "2px solid #c8c8c8",
@@ -30,6 +39,10 @@ export const defaultOptions = {
         display: "block",
         fontSize: "1.35rem"
     },
+    selectedSuggestionOption: {
+        background: "#110D3B",
+        color: "#FFF"
+    },
     suggestionsContainer: {
         display: "block",
         position: "absolute",
@@ -38,11 +51,6 @@ export const defaultOptions = {
         width: "20rem",
         zIndex: "1"
     },
-    suggestionOptions: {
-        margin: "0",
-        padding: "0",
-        listStyle: "none"
-    },
     suggestionOption: {
         margin: "0",
         padding: ".5rem",
@@ -50,5 +58,10 @@ export const defaultOptions = {
         whiteSpace: "nowrap",
         overflow: "hidden",
         cursor: "default"
+    },
+    suggestionOptions: {
+        margin: "0",
+        padding: "0",
+        listStyle: "none"
     }
 };
