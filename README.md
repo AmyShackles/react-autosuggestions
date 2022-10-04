@@ -142,19 +142,6 @@ If the user entered "brau" into the input field, the resulting html would look l
 </form>
 ```
 
-### CSS styling not configurable by style object (in case you want to override)
-```css
-li:hover, li.highlighted {
-    background: #110D3B;
-    color: #FFF
-  }
-  input.loading {
-    background-image: url(https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif);
-    background-position: right center;
-    background-repeat: no-repeat;
-  }
-```
-
 ### Features
 - If no results match the text entered (whether that means the fetch request resulted in an empty list or if the options list does not include anything that starts with the text value), a paragraph tag is displayed saying "No results found"
 - With an AutoSuggestServer component, if the fetch fails, a paragraph tag is displayed saying "Results could not be fetched"

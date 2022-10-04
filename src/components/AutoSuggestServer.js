@@ -1,7 +1,6 @@
 import React from "react";
 import { useDebounce } from "../utils/useDebounce.js";
 import { AutoSuggestContainer } from "../components/AutoSuggestContainer.js";
-import "../index.css";
 import fetch from "node-fetch";
 
 

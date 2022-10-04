@@ -1,7 +1,6 @@
 import React from "react";
 import { AutoSuggestClient } from "./AutoSuggestClient.js";
 import { AutoSuggestServer } from "./AutoSuggestServer.js";
-import "../index.css";
 import { defaultOptions } from "../utils/defaultOptions.js";
 
 export const AutoSuggest = ({

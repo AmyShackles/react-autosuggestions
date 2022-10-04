@@ -32,8 +32,6 @@
     "@testing-library/user-event": "^12.6.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.2.2",
-    "css-loader": "^5.0.1",
-    "identity-obj-proxy": "^3.0.0",
     "jest": "^26.6.3",
     "msw": "^0.25.0",
     "node-fetch": "^2.6.1",
@@ -44,9 +42,6 @@
     "webpack-cli": "^4.3.1"
   },
   "jest": {
-    "moduleNameMapper": {
-      "\\.css$": "identity-obj-proxy"
-    },
     "collectCoverageFrom": [
       "src/components/**/*.js",
       "src/utils/**/*.js"
