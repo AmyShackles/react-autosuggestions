@@ -1,6 +1,6 @@
 {
   "name": "react-autosuggestions",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "keywords": [
     "React",
     "auto-suggest",
@@ -14,8 +14,8 @@
   },
   "main": "dist/AutoSuggest.js",
   "peerDependencies": {
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react": ">=17.x",
+    "react-dom": ">=17.x"
   },
   "scripts": {
     "test": "jest tests --verbose",
@@ -30,9 +30,10 @@
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
-    "babel-jest": "^26.6.3",
+    "babel-jest": "^29.7.0",
     "babel-loader": "^8.2.2",
-    "jest": "^26.6.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "msw": "^0.25.0",
     "node-fetch": "^2.6.1",
     "react": "^17.0.1",
@@ -53,6 +54,7 @@
         "lines": 90,
         "statements": 90
       }
-    }
+    },
+    "testEnvironment": "jsdom"
   }
 }

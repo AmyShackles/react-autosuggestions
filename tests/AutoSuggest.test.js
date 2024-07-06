@@ -523,7 +523,7 @@ describe("Mouse selection", () => {
         fireEvent.change(input, { target: { value: "B" } });
         expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("B");
         const option = screen.getByRole("option", { name: "Bentley" });
-        userEvent.click(option);
+        act(() => userEvent.click(option));
         expect(screen.getByRole("textbox", { name: "Make" })).toHaveValue("Bentley");
         expect(screen.getByTestId("Value")).toHaveTextContent("Bentley");
         expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
@@ -543,7 +543,7 @@ describe("Mouse selection", () => {
         const option = screen.getByRole("option", { name: "Bentley" });
         expect(input).toHaveAttribute("aria-activedescendant", option.id);
         const newOption = screen.getByRole("option", { name: "BMW" });
-        userEvent.click(newOption);
+        act(() => userEvent.click(newOption));
         expect(input).not.toHaveAttribute("aria-activedescendant");
         expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
